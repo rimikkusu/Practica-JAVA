@@ -7,6 +7,30 @@ public class CategorieAuto extends BaseEntity {
     public CategorieAuto() {
     }
 
-    public 
+    public CategorieAuto(int id, String denumire, String descriere) {
+        super(id);
+        this.denumire = denumire;
+        this.descriere = descriere;
+    }
     
+    public String getDenumire() {
+        return denumire;
+    }
+
+    public void setDenumire(String denumire) {
+        this.denumire = denumire;
+    }
+
+    public String getDescriere() {
+        return descriere;
+    }
+
+    public void setDescriere(String descriere) {
+        this.descriere = descriere;
+    }
+
+    @Override
+    public String toString() {
+        return getId() + " | " + denumire + " | " + descriere;
+    }
 }
