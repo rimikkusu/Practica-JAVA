@@ -53,7 +53,7 @@ public class Plata extends BaseEntity {
 
     @Override
     public String toString() {
-        return getId() + " | Închiriere ID: " +
+        return getId() + " | Inchiriere ID: " +
                 inchiriere.getId() + " | " +
                 suma + " lei | " +
                 metodaPlata + " | " +

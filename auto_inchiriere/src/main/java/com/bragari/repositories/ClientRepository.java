@@ -133,4 +133,39 @@ public class ClientRepository implements CrudRepository<Client> {
             throw new RuntimeException("Eroare la ștergerea clientului: " + e.getMessage());
         }
     }
+
+    public List<Client> cautaDupaNume(String numeCautat) {
+    List<Client> clienti = new ArrayList<>();
+
+    String sql = """
+            SELECT id, nume, telefon, email
+            FROM clienti
+            WHERE LOWER(nume) LIKE LOWER(?)
+            ORDER BY id
+            """;
+
+    try (Connection connection = DatabaseManager.getConnection();
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setString(1, "%" + numeCautat + "%");
+
+        try (ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                Client client = new Client(
+                        resultSet.getInt("id"),
+                        resultSet.getString("nume"),
+                        resultSet.getString("telefon"),
+                        resultSet.getString("email")
+                );
+
+                clienti.add(client);
+            }
+        }
+
+    } catch (Exception e) {
+        throw new RuntimeException("Eroare la cautarea clientilor: " + e.getMessage());
+    }
+
+    return clienti;
+}
 }
