@@ -115,24 +115,36 @@ public class ClientRepository implements CrudRepository<Client> {
     }
 
     @Override
-    public void sterge(int id) {
-        String sql = "DELETE FROM clienti WHERE id = ?";
+public void sterge(int id) {
+    String checkSql = "SELECT COUNT(*) FROM inchirieri WHERE client_id = ?";
+    String deleteSql = "DELETE FROM clienti WHERE id = ?";
 
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+    try (Connection connection = DatabaseManager.getConnection()) {
 
-            statement.setInt(1, id);
+        try (PreparedStatement checkStatement = connection.prepareStatement(checkSql)) {
+            checkStatement.setInt(1, id);
 
-            int rows = statement.executeUpdate();
+            try (ResultSet resultSet = checkStatement.executeQuery()) {
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    throw new RuntimeException("Clientul nu poate fi sters deoarece are inchirieri inregistrate.");
+                }
+            }
+        }
+
+        try (PreparedStatement deleteStatement = connection.prepareStatement(deleteSql)) {
+            deleteStatement.setInt(1, id);
+
+            int rows = deleteStatement.executeUpdate();
 
             if (rows == 0) {
-                throw new RuntimeException("Clientul nu există.");
+                throw new RuntimeException("Clientul nu exista.");
             }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Eroare la ștergerea clientului: " + e.getMessage());
         }
+
+    } catch (Exception e) {
+        throw new RuntimeException("Eroare la stergerea clientului: " + e.getMessage());
     }
+}
 
     public List<Client> cautaDupaNume(String numeCautat) {
     List<Client> clienti = new ArrayList<>();
