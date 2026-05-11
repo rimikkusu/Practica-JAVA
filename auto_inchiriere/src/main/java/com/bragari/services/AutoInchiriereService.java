@@ -7,6 +7,7 @@ import com.bragari.models.CategorieAuto;
 import com.bragari.models.Client;
 import com.bragari.models.Inchiriere;
 import com.bragari.models.Plata;
+import com.bragari.models.StatusInchiriere;
 import com.bragari.repositories.AutomobilRepository;
 import com.bragari.repositories.CategorieAutoRepository;
 import com.bragari.repositories.ClientRepository;
@@ -55,6 +56,12 @@ public class AutoInchiriereService {
     }
 
     public void stergeClient(int id) {
+        for (Inchiriere inchiriere : inchiriereRepository.obtineToate()) {
+            if (inchiriere.getClient().getId() == id) {
+                throw new IllegalArgumentException("Clientul nu poate fi sters deoarece are inchirieri.");
+            }
+        }
+
         clientRepository.sterge(id);
     }
 
@@ -94,8 +101,8 @@ public class AutoInchiriereService {
     }
 
     public List<Automobil> obtineAutomobileDisponibile() {
-    return automobilRepository.obtineDisponibile();
-}
+        return automobilRepository.obtineDisponibile();
+    }
 
     public Automobil cautaAutomobilDupaId(int id) {
         return automobilRepository.cautaDupaId(id);
@@ -107,6 +114,12 @@ public class AutoInchiriereService {
     }
 
     public void stergeAutomobil(int id) {
+        for (Inchiriere inchiriere : inchiriereRepository.obtineToate()) {
+            if (inchiriere.getAutomobil().getId() == id) {
+                throw new IllegalArgumentException("Automobilul nu poate fi sters deoarece are inchirieri.");
+            }
+        }
+
         automobilRepository.sterge(id);
     }
 
@@ -137,10 +150,29 @@ public class AutoInchiriereService {
     public void actualizeazaInchiriere(Inchiriere inchiriere) {
         validatorService.valideazaInchiriere(inchiriere);
         inchiriereRepository.actualizeaza(inchiriere);
+
+        Automobil automobil = inchiriere.getAutomobil();
+        StatusInchiriere status = inchiriere.getStatus();
+
+        automobil.setDisponibil(status == StatusInchiriere.FINALIZATA || status == StatusInchiriere.ANULATA);
+        automobilRepository.actualizeaza(automobil);
     }
 
     public void stergeInchiriere(int id) {
+        for (Plata plata : plataRepository.obtineToate()) {
+            if (plata.getInchiriere().getId() == id) {
+                throw new IllegalArgumentException("Inchirierea nu poate fi stearsa deoarece are plati.");
+            }
+        }
+
+        Inchiriere inchiriere = inchiriereRepository.cautaDupaId(id);
         inchiriereRepository.sterge(id);
+
+        if (inchiriere != null) {
+            Automobil automobil = inchiriere.getAutomobil();
+            automobil.setDisponibil(true);
+            automobilRepository.actualizeaza(automobil);
+        }
     }
 
     // PLATI

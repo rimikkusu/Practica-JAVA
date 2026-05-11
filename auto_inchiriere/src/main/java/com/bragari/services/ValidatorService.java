@@ -45,8 +45,8 @@ public class ValidatorService {
             throw new IllegalArgumentException("Numarul de inmatriculare este obligatoriu.");
         }
 
-        if (automobil.getPretPeZi() < 0) {
-            throw new IllegalArgumentException("Pretul pe zi nu poate fi negativ.");
+        if (Double.isNaN(automobil.getPretPeZi()) || Double.isInfinite(automobil.getPretPeZi()) || automobil.getPretPeZi() < 0) {
+            throw new IllegalArgumentException("Pretul pe zi trebuie sa fie un numar valid si pozitiv.");
         }
     }
 
@@ -81,8 +81,8 @@ public class ValidatorService {
             throw new IllegalArgumentException("Plata trebuie sa fie legata de o inchiriere.");
         }
 
-        if (plata.getSuma() < 0) {
-            throw new IllegalArgumentException("Suma platii nu poate fi negativa.");
+        if (Double.isNaN(plata.getSuma()) || Double.isInfinite(plata.getSuma()) || plata.getSuma() < 0) {
+            throw new IllegalArgumentException("Suma platii trebuie sa fie un numar valid si pozitiv.");
         }
 
         if (plata.getMetodaPlata() == null || plata.getMetodaPlata().isBlank()) {

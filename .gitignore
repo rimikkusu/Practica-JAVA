@@ -6,6 +6,17 @@ target/
 build/
 out/
 
+# Maven temporary files
+dependency-reduced-pom.xml
+release.properties
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.properties.local
+secrets.*
+
 # VS Code
 .vscode/
 
@@ -20,6 +31,11 @@ out/
 
 # Logs
 *.log
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
 
 # OS files
 .DS_Store
