@@ -18,7 +18,11 @@ public class DialogHelper {
     }
 
     public static void aplicaCss(Scene scene) {
-        scene.getStylesheets().add(DialogHelper.class.getResource("/styles.css").toExternalForm());
+        String stylesheet = DialogHelper.class.getResource("/styles.css").toExternalForm();
+
+        if (!scene.getStylesheets().contains(stylesheet)) {
+            scene.getStylesheets().add(stylesheet);
+        }
     }
 
     public static Stage creeazaDialog(Stage owner, String title, VBox content) {
@@ -32,7 +36,7 @@ public class DialogHelper {
 
         dialog.setResizable(false);
 
-        content.getStyleClass().add("dialog-content");
+        content.getStyleClass().addAll("dialog-content", "content-card");
         content.setPadding(new Insets(20));
         content.setSpacing(14);
 
@@ -44,7 +48,16 @@ public class DialogHelper {
     }
 
     public static HBox creeazaButoaneDialog(Button primaryButton, Button cancelButton) {
+        if (!primaryButton.getStyleClass().contains("primary-button")) {
+            primaryButton.getStyleClass().add("primary-button");
+        }
+
+        if (!cancelButton.getStyleClass().contains("secondary-button")) {
+            cancelButton.getStyleClass().add("secondary-button");
+        }
+
         HBox buttons = new HBox(10);
+        buttons.getStyleClass().add("dialog-actions");
         buttons.setAlignment(Pos.CENTER_RIGHT);
         buttons.getChildren().addAll(primaryButton, cancelButton);
         return buttons;

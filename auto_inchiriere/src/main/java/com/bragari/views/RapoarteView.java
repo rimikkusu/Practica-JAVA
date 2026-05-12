@@ -15,6 +15,7 @@ import com.bragari.services.AutoInchiriereService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.CsvExporter;
 import com.bragari.util.DialogHelper;
+import com.bragari.util.SkeletonFactory;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -22,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -32,6 +34,8 @@ public class RapoarteView {
     private final BorderPane root;
     private final Supplier<Stage> ownerSupplier;
     private final BackgroundRunner backgroundRunner;
+    private StackPane reportContainer;
+    private TextArea raportTextArea;
 
     public RapoarteView(AutoInchiriereService service, BorderPane root, Supplier<Stage> ownerSupplier,
                         BackgroundRunner backgroundRunner) {
@@ -42,25 +46,35 @@ public class RapoarteView {
     }
 
     public void showRapoartePage() {
-        VBox page = new VBox(15);
-        page.setPadding(new Insets(20));
+        VBox page = new VBox(18);
+        page.getStyleClass().add("page-container");
 
         Label title = new Label("Rapoarte");
-        title.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        title.getStyleClass().add("page-title");
 
-        TextArea raportTextArea = new TextArea();
+        raportTextArea = new TextArea();
         raportTextArea.setEditable(false);
         raportTextArea.setWrapText(false);
         raportTextArea.setPrefRowCount(25);
-        raportTextArea.setStyle("-fx-font-family: Consolas; -fx-font-size: 13px;");
+        raportTextArea.getStyleClass().add("report-area");
+
+        reportContainer = new StackPane();
+        reportContainer.getStyleClass().add("report-content-area");
+        reportContainer.getChildren().add(raportTextArea);
 
         Button raportClientiButton = new Button("Raport clienti");
+        raportClientiButton.getStyleClass().add("primary-button");
         Button raportAutomobileButton = new Button("Raport automobile");
+        raportAutomobileButton.getStyleClass().add("secondary-button");
         Button raportInchirieriButton = new Button("Raport inchirieri");
+        raportInchirieriButton.getStyleClass().add("secondary-button");
         Button exportTxtButton = new Button("Export TXT");
+        exportTxtButton.getStyleClass().add("secondary-button");
         Button exportCsvButton = new Button("Export CSV");
+        exportCsvButton.getStyleClass().add("secondary-button");
 
         HBox buttons = new HBox(10);
+        buttons.getStyleClass().add("page-toolbar");
         buttons.getChildren().addAll(
                 raportClientiButton,
                 raportAutomobileButton,
@@ -69,33 +83,43 @@ public class RapoarteView {
                 exportCsvButton
         );
 
+        VBox contentCard = new VBox(14);
+        contentCard.getStyleClass().add("content-card");
+        contentCard.getChildren().addAll(buttons, reportContainer);
+
         final String[] tipRaportCurent = {""};
 
         raportClientiButton.setOnAction(e -> {
+            arataSkeletonRaport();
             backgroundRunner.run(() -> genereazaRaport("clienti"), raport -> {
                 raportTextArea.setText(raport);
+                arataRaport();
                 tipRaportCurent[0] = "clienti";
-            });
+            }, error -> arataRaport());
         });
 
         raportAutomobileButton.setOnAction(e -> {
+            arataSkeletonRaport();
             backgroundRunner.run(() -> genereazaRaport("automobile"), raport -> {
                 raportTextArea.setText(raport);
+                arataRaport();
                 tipRaportCurent[0] = "automobile";
-            });
+            }, error -> arataRaport());
         });
 
         raportInchirieriButton.setOnAction(e -> {
+            arataSkeletonRaport();
             backgroundRunner.run(() -> genereazaRaport("inchirieri"), raport -> {
                 raportTextArea.setText(raport);
+                arataRaport();
                 tipRaportCurent[0] = "inchirieri";
-            });
+            }, error -> arataRaport());
         });
 
         exportTxtButton.setOnAction(e -> exportRaport(raportTextArea, tipRaportCurent[0], false));
         exportCsvButton.setOnAction(e -> exportRaport(raportTextArea, tipRaportCurent[0], true));
 
-        page.getChildren().addAll(title, buttons, raportTextArea);
+        page.getChildren().addAll(title, contentCard);
 
         root.setCenter(page);
     }
@@ -304,5 +328,17 @@ public class RapoarteView {
 
     private Stage owner() {
         return ownerSupplier.get();
+    }
+
+    private void arataSkeletonRaport() {
+        if (reportContainer != null) {
+            reportContainer.getChildren().setAll(SkeletonFactory.createReportSkeleton());
+        }
+    }
+
+    private void arataRaport() {
+        if (reportContainer != null) {
+            reportContainer.getChildren().setAll(raportTextArea);
+        }
     }
 }

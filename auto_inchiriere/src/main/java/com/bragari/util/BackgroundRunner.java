@@ -5,5 +5,10 @@ import java.util.function.Consumer;
 
 @FunctionalInterface
 public interface BackgroundRunner {
-    <T> void run(Callable<T> action, Consumer<T> onSuccess);
+    <T> void run(Callable<T> action, Consumer<T> onSuccess, Consumer<Throwable> onError);
+
+    default <T> void run(Callable<T> action, Consumer<T> onSuccess) {
+        run(action, onSuccess, error -> {
+        });
+    }
 }

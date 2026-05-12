@@ -1,6 +1,8 @@
 package com.bragari.views;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 import com.bragari.models.Automobil;
@@ -11,20 +13,22 @@ import com.bragari.services.AutoInchiriereService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.DialogHelper;
 import com.bragari.util.FormValidator;
+import com.bragari.util.SkeletonFactory;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -36,6 +40,7 @@ public class InchirieriView {
     private final BackgroundRunner backgroundRunner;
 
     private TableView<Inchiriere> inchirieriTable;
+    private StackPane tableContainer;
 
     public InchirieriView(AutoInchiriereService service, BorderPane root, Supplier<Stage> ownerSupplier,
                           BackgroundRunner backgroundRunner) {
@@ -46,13 +51,14 @@ public class InchirieriView {
     }
 
     public void showInchirieriPage() {
-        VBox page = new VBox(15);
-        page.setPadding(new Insets(20));
+        VBox page = new VBox(18);
+        page.getStyleClass().add("page-container");
 
         Label title = new Label("Gestionare Inchirieri");
-        title.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        title.getStyleClass().add("page-title");
 
         inchirieriTable = new TableView<>();
+        inchirieriTable.getStyleClass().add("app-table");
 
         TableColumn<Inchiriere, Integer> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -89,6 +95,32 @@ public class InchirieriView {
         statusColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getStatus().toString())
         );
+        statusColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                Label badge = new Label(item);
+                badge.getStyleClass().add("status-badge");
+
+                if ("ACTIVA".equalsIgnoreCase(item)) {
+                    badge.getStyleClass().add("status-success");
+                } else if ("ANULATA".equalsIgnoreCase(item)) {
+                    badge.getStyleClass().add("status-danger");
+                } else {
+                    badge.getStyleClass().add("status-neutral");
+                }
+
+                setGraphic(badge);
+                setText(null);
+            }
+        });
 
         inchirieriTable.getColumns().addAll(
                 idColumn,
@@ -101,15 +133,26 @@ public class InchirieriView {
         );
 
         inchirieriTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        refreshInchirieriTable();
 
         Button adaugaButton = new Button("Adauga");
+        adaugaButton.getStyleClass().add("primary-button");
         Button editeazaStatusButton = new Button("Editeaza");
+        editeazaStatusButton.getStyleClass().add("secondary-button");
         Button stergeButton = new Button("Sterge");
+        stergeButton.getStyleClass().add("danger-button");
         Button refreshButton = new Button("Refresh");
+        refreshButton.getStyleClass().add("secondary-button");
 
         HBox buttons = new HBox(10);
+        buttons.getStyleClass().add("page-toolbar");
         buttons.getChildren().addAll(adaugaButton, editeazaStatusButton, stergeButton, refreshButton);
+
+        tableContainer = new StackPane();
+        tableContainer.getStyleClass().add("table-content-area");
+
+        VBox contentCard = new VBox(14);
+        contentCard.getStyleClass().add("content-card");
+        contentCard.getChildren().addAll(buttons, tableContainer);
 
         adaugaButton.setOnAction(e -> showAddInchiriereDialog());
 
@@ -141,13 +184,10 @@ public class InchirieriView {
                     return;
                 }
 
-                backgroundRunner.run(() -> {
+                incarcaInchirieri(() -> {
                     service.stergeInchiriere(selectedInchiriere.getId());
                     return service.obtineInchirieri();
-                }, inchirieri -> {
-                    inchirieriTable.setItems(FXCollections.observableArrayList(inchirieri));
-                    DialogHelper.showInfo(owner(), "Inchiriere stearsa cu succes.");
-                });
+                }, "Inchiriere stearsa cu succes.");
             } catch (Exception ex) {
                 DialogHelper.showError(owner(), ex.getMessage());
             }
@@ -155,9 +195,10 @@ public class InchirieriView {
 
         refreshButton.setOnAction(e -> refreshInchirieriTable());
 
-        page.getChildren().addAll(title, buttons, inchirieriTable);
+        page.getChildren().addAll(title, contentCard);
 
         root.setCenter(page);
+        refreshInchirieriTable();
     }
 
     private void showAddInchiriereDialog() {
@@ -289,10 +330,7 @@ public class InchirieriView {
     }
 
     private void refreshInchirieriTable() {
-        backgroundRunner.run(
-                () -> service.obtineInchirieri(),
-                inchirieri -> inchirieriTable.setItems(FXCollections.observableArrayList(inchirieri))
-        );
+        incarcaInchirieri(() -> service.obtineInchirieri(), null);
     }
 
     private void refreshClientiComboBox(ComboBox<Client> clientComboBox) {
@@ -311,5 +349,30 @@ public class InchirieriView {
 
     private Stage owner() {
         return ownerSupplier.get();
+    }
+
+    private void incarcaInchirieri(Callable<List<Inchiriere>> action, String successMessage) {
+        arataSkeleton();
+
+        backgroundRunner.run(action, inchirieri -> {
+            inchirieriTable.setItems(FXCollections.observableArrayList(inchirieri));
+            arataTabel();
+
+            if (successMessage != null && !successMessage.isBlank()) {
+                DialogHelper.showInfo(owner(), successMessage);
+            }
+        }, error -> arataTabel());
+    }
+
+    private void arataSkeleton() {
+        if (tableContainer != null) {
+            tableContainer.getChildren().setAll(SkeletonFactory.createTableSkeleton(7, 6));
+        }
+    }
+
+    private void arataTabel() {
+        if (tableContainer != null) {
+            tableContainer.getChildren().setAll(inchirieriTable);
+        }
     }
 }

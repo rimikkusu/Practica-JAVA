@@ -1,5 +1,7 @@
 package com.bragari.views;
 
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 import com.bragari.models.Client;
@@ -7,9 +9,9 @@ import com.bragari.services.AutoInchiriereService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.DialogHelper;
 import com.bragari.util.FormValidator;
+import com.bragari.util.SkeletonFactory;
 
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -19,6 +21,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -30,6 +33,7 @@ public class ClientiView {
     private final BackgroundRunner backgroundRunner;
 
     private TableView<Client> clientiTable;
+    private StackPane tableContainer;
 
     public ClientiView(AutoInchiriereService service, BorderPane root, Supplier<Stage> ownerSupplier,
                        BackgroundRunner backgroundRunner) {
@@ -40,13 +44,14 @@ public class ClientiView {
     }
 
     public void showClientiPage() {
-        VBox page = new VBox(15);
-        page.setPadding(new Insets(20));
+        VBox page = new VBox(18);
+        page.getStyleClass().add("page-container");
 
         Label title = new Label("Gestionare Clienti");
-        title.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        title.getStyleClass().add("page-title");
 
         clientiTable = new TableView<>();
+        clientiTable.getStyleClass().add("app-table");
 
         TableColumn<Client, Integer> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -63,19 +68,32 @@ public class ClientiView {
         clientiTable.getColumns().addAll(idColumn, numeColumn, telefonColumn, emailColumn);
         clientiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        refreshClientiTable();
-
         TextField cautareField = new TextField();
         cautareField.setPromptText("Cauta dupa nume");
+        cautareField.getStyleClass().add("search-field");
+        cautareField.setPrefWidth(220);
 
         Button adaugaButton = new Button("Adauga");
+        adaugaButton.getStyleClass().add("primary-button");
         Button editeazaButton = new Button("Editeaza");
+        editeazaButton.getStyleClass().add("secondary-button");
         Button stergeButton = new Button("Sterge");
+        stergeButton.getStyleClass().add("danger-button");
         Button cautaButton = new Button("Cauta");
+        cautaButton.getStyleClass().add("secondary-button");
         Button refreshButton = new Button("Refresh");
+        refreshButton.getStyleClass().add("secondary-button");
 
         HBox buttons = new HBox(10);
+        buttons.getStyleClass().add("page-toolbar");
         buttons.getChildren().addAll(adaugaButton, editeazaButton, stergeButton, cautareField, cautaButton, refreshButton);
+
+        tableContainer = new StackPane();
+        tableContainer.getStyleClass().add("table-content-area");
+
+        VBox contentCard = new VBox(14);
+        contentCard.getStyleClass().add("content-card");
+        contentCard.getChildren().addAll(buttons, tableContainer);
 
         adaugaButton.setOnAction(e -> showAddClientDialog());
 
@@ -102,22 +120,16 @@ public class ClientiView {
                 return;
             }
 
-            backgroundRunner.run(() -> {
+            incarcaClienti(() -> {
                 service.stergeClient(selectedClient.getId());
                 return service.obtineClienti();
-            }, clienti -> {
-                clientiTable.setItems(FXCollections.observableArrayList(clienti));
-                DialogHelper.showInfo(owner(), "Client sters cu succes.");
-            });
+            }, "Client sters cu succes.");
         });
 
         cautaButton.setOnAction(e -> {
             String text = cautareField.getText();
 
-            backgroundRunner.run(
-                    () -> service.cautaClientiDupaNume(text),
-                    clienti -> clientiTable.setItems(FXCollections.observableArrayList(clienti))
-            );
+            incarcaClienti(() -> service.cautaClientiDupaNume(text), null);
         });
 
         refreshButton.setOnAction(e -> {
@@ -125,9 +137,10 @@ public class ClientiView {
             cautareField.clear();
         });
 
-        page.getChildren().addAll(title, buttons, clientiTable);
+        page.getChildren().addAll(title, contentCard);
 
         root.setCenter(page);
+        refreshClientiTable();
     }
 
     private void showAddClientDialog() {
@@ -230,10 +243,32 @@ public class ClientiView {
     }
 
     private void refreshClientiTable() {
-        backgroundRunner.run(
-                () -> service.obtineClienti(),
-                clienti -> clientiTable.setItems(FXCollections.observableArrayList(clienti))
-        );
+        incarcaClienti(() -> service.obtineClienti(), null);
+    }
+
+    private void incarcaClienti(Callable<List<Client>> action, String successMessage) {
+        arataSkeleton();
+
+        backgroundRunner.run(action, clienti -> {
+            clientiTable.setItems(FXCollections.observableArrayList(clienti));
+            arataTabel();
+
+            if (successMessage != null && !successMessage.isBlank()) {
+                DialogHelper.showInfo(owner(), successMessage);
+            }
+        }, error -> arataTabel());
+    }
+
+    private void arataSkeleton() {
+        if (tableContainer != null) {
+            tableContainer.getChildren().setAll(SkeletonFactory.createTableSkeleton(4, 6));
+        }
+    }
+
+    private void arataTabel() {
+        if (tableContainer != null) {
+            tableContainer.getChildren().setAll(clientiTable);
+        }
     }
 
     private Stage owner() {

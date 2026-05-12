@@ -1,6 +1,7 @@
 package com.bragari.views;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 import com.bragari.models.Automobil;
@@ -9,14 +10,15 @@ import com.bragari.services.AutoInchiriereService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.DialogHelper;
 import com.bragari.util.FormValidator;
+import com.bragari.util.SkeletonFactory;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -24,6 +26,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -35,6 +38,7 @@ public class AutomobileView {
     private final BackgroundRunner backgroundRunner;
 
     private TableView<Automobil> automobileTable;
+    private StackPane tableContainer;
     private boolean afiseazaDoarDisponibile = false;
 
     public AutomobileView(AutoInchiriereService service, BorderPane root, Supplier<Stage> ownerSupplier,
@@ -48,13 +52,14 @@ public class AutomobileView {
     public void showAutomobilePage() {
         afiseazaDoarDisponibile = false;
 
-        VBox page = new VBox(15);
-        page.setPadding(new Insets(20));
+        VBox page = new VBox(18);
+        page.getStyleClass().add("page-container");
 
         Label title = new Label("Gestionare Automobile");
-        title.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        title.getStyleClass().add("page-title");
 
         automobileTable = new TableView<>();
+        automobileTable.getStyleClass().add("app-table");
 
         TableColumn<Automobil, Integer> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -80,6 +85,23 @@ public class AutomobileView {
         disponibilColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().isDisponibil() ? "Da" : "Nu")
         );
+        disponibilColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                Label badge = new Label("Da".equals(item) ? "Disponibil" : "Indisponibil");
+                badge.getStyleClass().addAll("status-badge", "Da".equals(item) ? "status-success" : "status-danger");
+                setGraphic(badge);
+                setText(null);
+            }
+        });
 
         automobileTable.getColumns().addAll(
                 idColumn,
@@ -93,15 +115,19 @@ public class AutomobileView {
 
         automobileTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        refreshAutomobileTable();
-
         Button adaugaButton = new Button("Adauga");
+        adaugaButton.getStyleClass().add("primary-button");
         Button editeazaButton = new Button("Editeaza");
+        editeazaButton.getStyleClass().add("secondary-button");
         Button stergeButton = new Button("Sterge");
+        stergeButton.getStyleClass().add("danger-button");
         Button refreshButton = new Button("Refresh");
+        refreshButton.getStyleClass().add("secondary-button");
         Button disponibileButton = new Button("Doar disponibile");
+        disponibileButton.getStyleClass().add("secondary-button");
 
         HBox buttons = new HBox(10);
+        buttons.getStyleClass().add("page-toolbar");
         buttons.getChildren().addAll(
                 adaugaButton,
                 editeazaButton,
@@ -109,6 +135,13 @@ public class AutomobileView {
                 refreshButton,
                 disponibileButton
         );
+
+        tableContainer = new StackPane();
+        tableContainer.getStyleClass().add("table-content-area");
+
+        VBox contentCard = new VBox(14);
+        contentCard.getStyleClass().add("content-card");
+        contentCard.getChildren().addAll(buttons, tableContainer);
 
         adaugaButton.setOnAction(e -> showAddAutomobilDialog());
 
@@ -140,13 +173,10 @@ public class AutomobileView {
                     return;
                 }
 
-                backgroundRunner.run(() -> {
+                incarcaAutomobile(() -> {
                     service.stergeAutomobil(selectedAutomobil.getId());
                     return service.obtineAutomobile();
-                }, automobile -> {
-                    automobileTable.setItems(FXCollections.observableArrayList(automobile));
-                    DialogHelper.showInfo(owner(), "Automobil sters cu succes.");
-                });
+                }, "Automobil sters cu succes.");
             } catch (Exception ex) {
                 DialogHelper.showError(owner(), ex.getMessage());
             }
@@ -162,22 +192,19 @@ public class AutomobileView {
             afiseazaDoarDisponibile = !afiseazaDoarDisponibile;
 
             if (afiseazaDoarDisponibile) {
-                backgroundRunner.run(
-                        () -> service.obtineAutomobileDisponibile(),
-                        automobile -> {
-                            automobileTable.setItems(FXCollections.observableArrayList(automobile));
-                            disponibileButton.setText("Afiseaza toate");
-                        }
-                );
+                incarcaAutomobile(() -> service.obtineAutomobileDisponibile(), null, () -> {
+                    disponibileButton.setText("Afiseaza toate");
+                });
             } else {
                 refreshAutomobileTable();
                 disponibileButton.setText("Doar disponibile");
             }
         });
 
-        page.getChildren().addAll(title, buttons, automobileTable);
+        page.getChildren().addAll(title, contentCard);
 
         root.setCenter(page);
+        refreshAutomobileTable();
     }
 
     private void showAddAutomobilDialog() {
@@ -323,10 +350,7 @@ public class AutomobileView {
     }
 
     private void refreshAutomobileTable() {
-        backgroundRunner.run(
-                () -> service.obtineAutomobile(),
-                automobile -> automobileTable.setItems(FXCollections.observableArrayList(automobile))
-        );
+        incarcaAutomobile(() -> service.obtineAutomobile(), null);
     }
 
     private void refreshCategoriiComboBox(ComboBox<CategorieAuto> categorieComboBox) {
@@ -372,5 +396,38 @@ public class AutomobileView {
 
     private Stage owner() {
         return ownerSupplier.get();
+    }
+
+    private void incarcaAutomobile(Callable<List<Automobil>> action, String successMessage) {
+        incarcaAutomobile(action, successMessage, null);
+    }
+
+    private void incarcaAutomobile(Callable<List<Automobil>> action, String successMessage, Runnable successUiAction) {
+        arataSkeleton();
+
+        backgroundRunner.run(action, automobile -> {
+            automobileTable.setItems(FXCollections.observableArrayList(automobile));
+            arataTabel();
+
+            if (successUiAction != null) {
+                successUiAction.run();
+            }
+
+            if (successMessage != null && !successMessage.isBlank()) {
+                DialogHelper.showInfo(owner(), successMessage);
+            }
+        }, error -> arataTabel());
+    }
+
+    private void arataSkeleton() {
+        if (tableContainer != null) {
+            tableContainer.getChildren().setAll(SkeletonFactory.createTableSkeleton(7, 6));
+        }
+    }
+
+    private void arataTabel() {
+        if (tableContainer != null) {
+            tableContainer.getChildren().setAll(automobileTable);
+        }
     }
 }
