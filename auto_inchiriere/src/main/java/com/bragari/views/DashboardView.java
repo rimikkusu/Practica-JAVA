@@ -10,8 +10,10 @@ import com.bragari.models.Inchiriere;
 import com.bragari.models.Plata;
 import com.bragari.models.StatusInchiriere;
 import com.bragari.services.AutoInchiriereService;
+import com.bragari.services.SettingsService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.SkeletonFactory;
+import com.bragari.util.ViewFactory;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -28,6 +30,7 @@ import javafx.stage.Stage;
 public class DashboardView {
 
     private final AutoInchiriereService service;
+    private final SettingsService settingsService;
     private final BorderPane root;
     private final Supplier<Stage> ownerSupplier;
     private final BackgroundRunner backgroundRunner;
@@ -36,33 +39,24 @@ public class DashboardView {
 
     public DashboardView(AutoInchiriereService service, BorderPane root, Supplier<Stage> ownerSupplier,
                          BackgroundRunner backgroundRunner) {
+        this(service, new SettingsService(), root, ownerSupplier, backgroundRunner);
+    }
+
+    public DashboardView(AutoInchiriereService service, SettingsService settingsService, BorderPane root,
+                         Supplier<Stage> ownerSupplier, BackgroundRunner backgroundRunner) {
         this.service = service;
+        this.settingsService = settingsService;
         this.root = root;
         this.ownerSupplier = ownerSupplier;
         this.backgroundRunner = backgroundRunner;
     }
 
     public void showDashboardPage() {
-        VBox page = new VBox(18);
-        page.getStyleClass().add("page-container");
-
-        HBox header = new HBox(10);
-        header.setFillHeight(false);
-
-        VBox titleBox = new VBox(4);
-        Label title = new Label("Dashboard");
-        title.getStyleClass().add("page-title");
-        Label subtitle = new Label("Privire rapida asupra activitatii curente.");
-        subtitle.getStyleClass().add("page-subtitle");
-        titleBox.getChildren().addAll(title, subtitle);
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        VBox pageContent = new VBox(16);
+        pageContent.getStyleClass().add("page-content");
 
         Button refreshButton = new Button("Refresh");
         refreshButton.getStyleClass().add("secondary-button");
-
-        header.getChildren().addAll(titleBox, spacer, refreshButton);
 
         TilePane statGrid = new TilePane();
         statGrid.getStyleClass().add("stat-grid");
@@ -70,17 +64,17 @@ public class DashboardView {
         statGrid.setHgap(12);
         statGrid.setVgap(12);
 
-        VBox autoCard = createStatCard("AUTO", "stat-icon status-warning", "Total automobile", "0", "In flota");
-        VBox clientiCard = createStatCard("CLI", "stat-icon status-success", "Total clienti", "0", "Inregistrati");
-        VBox activeCard = createStatCard("ACT", "stat-icon status-info", "Inchirieri active", "0", "In desfasurare");
-        VBox venitCard = createStatCard("LEI", "stat-icon status-neutral", "Incasari luna", "0", "Plati luna curenta");
+        VBox autoCard = createStatCard("AUTO", "stat-icon stat-icon-amber", "Total automobile", "0", "In flota");
+        VBox clientiCard = createStatCard("CLI", "stat-icon stat-icon-teal", "Total clienti", "0", "Inregistrati");
+        VBox activeCard = createStatCard("ACT", "stat-icon stat-icon-blue", "Inchirieri active", "0", "In desfasurare");
+        VBox venitCard = createStatCard("LEI", "stat-icon stat-icon-orange", "Incasari luna", "0", "Plati luna curenta");
 
         statGrid.getChildren().addAll(autoCard, clientiCard, activeCard, venitCard);
         statsContainer = new StackPane(statGrid);
         statsContainer.getStyleClass().add("dashboard-section");
 
         VBox recentCard = new VBox(12);
-        recentCard.getStyleClass().add("content-card");
+        ViewFactory.asCard(recentCard);
         Label recentTitle = new Label("Inchirieri recente");
         recentTitle.getStyleClass().add("page-subtitle");
         VBox recentList = new VBox();
@@ -103,8 +97,8 @@ public class DashboardView {
 
         refreshButton.setOnAction(e -> refreshAction.run());
 
-        page.getChildren().addAll(header, statsContainer, recentContainer);
-        root.setCenter(page);
+        pageContent.getChildren().addAll(statsContainer, recentContainer);
+        root.setCenter(ViewFactory.createPage("Dashboard", "D", pageContent, refreshButton));
 
         refreshAction.run();
     }
@@ -200,7 +194,12 @@ public class DashboardView {
             amount.getStyleClass().add("recent-amount");
 
             Label statusBadge = new Label(inchiriere.getStatus().name());
-            statusBadge.getStyleClass().addAll("status-badge", statusClassForInchiriere(inchiriere.getStatus()));
+            statusBadge.getStyleClass().addAll(
+                    "status-badge",
+                    "badge",
+                    statusClassForInchiriere(inchiriere.getStatus()),
+                    badgeClassForInchiriere(inchiriere.getStatus())
+            );
 
             row.getChildren().addAll(avatar, info, spacer, amount, statusBadge);
             recentList.getChildren().add(row);
@@ -248,13 +247,33 @@ public class DashboardView {
         return "status-neutral";
     }
 
+    private String badgeClassForInchiriere(StatusInchiriere status) {
+        if (status == StatusInchiriere.ACTIVA) {
+            return "badge-activa";
+        }
+
+        if (status == StatusInchiriere.ANULATA) {
+            return "badge-anulata";
+        }
+
+        return "badge-finalizata";
+    }
+
     private void arataSkeletonDashboard() {
         if (statsContainer != null) {
-            statsContainer.getChildren().setAll(SkeletonFactory.createCardsSkeleton(4));
+            statsContainer.getChildren().setAll(
+                    settingsService.folosesteSkeletonLoading()
+                            ? SkeletonFactory.createCardsSkeleton(4)
+                            : SkeletonFactory.createSimpleLoading("Se incarca statisticile...")
+            );
         }
 
         if (recentContainer != null) {
-            recentContainer.getChildren().setAll(SkeletonFactory.createTableSkeleton(2, 4));
+            recentContainer.getChildren().setAll(
+                    settingsService.folosesteSkeletonLoading()
+                            ? SkeletonFactory.createTableSkeleton(2, 4)
+                            : SkeletonFactory.createSimpleLoading("Se incarca inchirierile recente...")
+            );
         }
     }
 

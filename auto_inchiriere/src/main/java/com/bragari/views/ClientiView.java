@@ -6,10 +6,12 @@ import java.util.function.Supplier;
 
 import com.bragari.models.Client;
 import com.bragari.services.AutoInchiriereService;
+import com.bragari.services.SettingsService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.DialogHelper;
 import com.bragari.util.FormValidator;
 import com.bragari.util.SkeletonFactory;
+import com.bragari.util.ViewFactory;
 
 import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
@@ -28,6 +30,7 @@ import javafx.stage.Stage;
 public class ClientiView {
 
     private final AutoInchiriereService service;
+    private final SettingsService settingsService;
     private final BorderPane root;
     private final Supplier<Stage> ownerSupplier;
     private final BackgroundRunner backgroundRunner;
@@ -37,18 +40,21 @@ public class ClientiView {
 
     public ClientiView(AutoInchiriereService service, BorderPane root, Supplier<Stage> ownerSupplier,
                        BackgroundRunner backgroundRunner) {
+        this(service, new SettingsService(), root, ownerSupplier, backgroundRunner);
+    }
+
+    public ClientiView(AutoInchiriereService service, SettingsService settingsService, BorderPane root,
+                       Supplier<Stage> ownerSupplier, BackgroundRunner backgroundRunner) {
         this.service = service;
+        this.settingsService = settingsService;
         this.root = root;
         this.ownerSupplier = ownerSupplier;
         this.backgroundRunner = backgroundRunner;
     }
 
     public void showClientiPage() {
-        VBox page = new VBox(18);
-        page.getStyleClass().add("page-container");
-
-        Label title = new Label("Gestionare Clienti");
-        title.getStyleClass().add("page-title");
+        VBox pageContent = new VBox(16);
+        pageContent.getStyleClass().add("page-content");
 
         clientiTable = new TableView<>();
         clientiTable.getStyleClass().add("app-table");
@@ -66,7 +72,7 @@ public class ClientiView {
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         clientiTable.getColumns().addAll(idColumn, numeColumn, telefonColumn, emailColumn);
-        clientiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        ViewFactory.styleTable(clientiTable);
 
         TextField cautareField = new TextField();
         cautareField.setPromptText("Cauta dupa nume");
@@ -92,7 +98,7 @@ public class ClientiView {
         tableContainer.getStyleClass().add("table-content-area");
 
         VBox contentCard = new VBox(14);
-        contentCard.getStyleClass().add("content-card");
+        ViewFactory.asCard(contentCard);
         contentCard.getChildren().addAll(buttons, tableContainer);
 
         adaugaButton.setOnAction(e -> showAddClientDialog());
@@ -116,7 +122,8 @@ public class ClientiView {
                 return;
             }
 
-            if (!DialogHelper.confirmaActiune(owner(), "Sigur vrei sa stergi acest client?")) {
+            if (settingsService.isConfirmareStergereActiva()
+                    && !DialogHelper.confirmaActiune(owner(), "Sigur vrei sa stergi acest client?")) {
                 return;
             }
 
@@ -137,9 +144,9 @@ public class ClientiView {
             cautareField.clear();
         });
 
-        page.getChildren().addAll(title, contentCard);
+        pageContent.getChildren().add(contentCard);
 
-        root.setCenter(page);
+        root.setCenter(ViewFactory.createPage("Clienti", "C", pageContent));
         refreshClientiTable();
     }
 
@@ -261,7 +268,11 @@ public class ClientiView {
 
     private void arataSkeleton() {
         if (tableContainer != null) {
-            tableContainer.getChildren().setAll(SkeletonFactory.createTableSkeleton(4, 6));
+            tableContainer.getChildren().setAll(
+                    settingsService.folosesteSkeletonLoading()
+                            ? SkeletonFactory.createTableSkeleton(4, 6)
+                            : SkeletonFactory.createSimpleLoading("Se incarca clientii...")
+            );
         }
     }
 

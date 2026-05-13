@@ -4,11 +4,12 @@ import java.util.function.Supplier;
 
 import com.bragari.models.Utilizator;
 import com.bragari.services.AuthService;
+import com.bragari.services.SettingsService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.DialogHelper;
+import com.bragari.util.ViewFactory;
 
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -27,6 +28,7 @@ import javafx.stage.Stage;
 public class UtilizatoriView {
 
     private final AuthService authService;
+    private final SettingsService settingsService;
     private final BorderPane root;
     private final Supplier<Stage> ownerSupplier;
     private final BackgroundRunner backgroundRunner;
@@ -36,7 +38,14 @@ public class UtilizatoriView {
 
     public UtilizatoriView(AuthService authService, BorderPane root, Supplier<Stage> ownerSupplier,
                            BackgroundRunner backgroundRunner, Supplier<Utilizator> utilizatorCurentSupplier) {
+        this(authService, new SettingsService(), root, ownerSupplier, backgroundRunner, utilizatorCurentSupplier);
+    }
+
+    public UtilizatoriView(AuthService authService, SettingsService settingsService, BorderPane root,
+                           Supplier<Stage> ownerSupplier, BackgroundRunner backgroundRunner,
+                           Supplier<Utilizator> utilizatorCurentSupplier) {
         this.authService = authService;
+        this.settingsService = settingsService;
         this.root = root;
         this.ownerSupplier = ownerSupplier;
         this.backgroundRunner = backgroundRunner;
@@ -44,11 +53,8 @@ public class UtilizatoriView {
     }
 
     public void showUtilizatoriPage() {
-        VBox page = new VBox(18);
-        page.getStyleClass().add("page-container");
-
-        Label title = new Label("Gestionare Utilizatori");
-        title.getStyleClass().add("page-title");
+        VBox pageContent = new VBox(16);
+        pageContent.getStyleClass().add("page-content");
 
         utilizatoriTable = new TableView<>();
         utilizatoriTable.getStyleClass().add("app-table");
@@ -75,6 +81,7 @@ public class UtilizatoriView {
                 Label badge = new Label(item);
                 badge.getStyleClass().addAll(
                         "status-badge",
+                        "badge",
                         "ADMIN".equalsIgnoreCase(item) ? "status-admin" : "status-user"
                 );
                 setGraphic(badge);
@@ -83,7 +90,7 @@ public class UtilizatoriView {
         });
 
         utilizatoriTable.getColumns().addAll(idColumn, usernameColumn, rolColumn);
-        utilizatoriTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        ViewFactory.styleTable(utilizatoriTable);
 
         refreshUtilizatoriTable();
 
@@ -101,7 +108,7 @@ public class UtilizatoriView {
         buttons.getChildren().addAll(adaugaButton, schimbaParolaButton, stergeButton, refreshButton);
 
         VBox contentCard = new VBox(14);
-        contentCard.getStyleClass().add("content-card");
+        ViewFactory.asCard(contentCard);
         contentCard.getChildren().addAll(buttons, utilizatoriTable);
 
         adaugaButton.setOnAction(e -> showAddUtilizatorDialog());
@@ -132,7 +139,8 @@ public class UtilizatoriView {
                 return;
             }
 
-            if (!DialogHelper.confirmaActiune(owner(), "Sigur vrei sa stergi acest utilizator?")) {
+            if (settingsService.isConfirmareStergereActiva()
+                    && !DialogHelper.confirmaActiune(owner(), "Sigur vrei sa stergi acest utilizator?")) {
                 return;
             }
 
@@ -147,9 +155,9 @@ public class UtilizatoriView {
 
         refreshButton.setOnAction(e -> refreshUtilizatoriTable());
 
-        page.getChildren().addAll(title, contentCard);
+        pageContent.getChildren().add(contentCard);
 
-        root.setCenter(page);
+        root.setCenter(ViewFactory.createPage("Utilizatori", "U", pageContent));
     }
 
     private void showAddUtilizatorDialog() {

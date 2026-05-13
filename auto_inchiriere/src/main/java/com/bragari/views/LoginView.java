@@ -16,6 +16,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -40,16 +41,19 @@ public class LoginView {
     public void showLoginPage() {
         root.setLeft(null);
 
-        StackPane page = new StackPane();
-        page.getStyleClass().add("login-page");
-        page.setPadding(new Insets(30));
+        StackPane loginRoot = new StackPane();
+        loginRoot.getStyleClass().addAll("login-root", "login-page", "login-background");
+
+        Pane overlay = new Pane();
+        overlay.getStyleClass().add("login-overlay");
 
         VBox card = new VBox(14);
         card.getStyleClass().add("login-card");
         card.setAlignment(Pos.CENTER);
+        card.setMaxWidth(360);
 
         Label badge = new Label("AI");
-        badge.getStyleClass().add("login-badge");
+        badge.getStyleClass().addAll("login-logo-box", "login-badge");
 
         Label title = new Label("Auto Inchiriere");
         title.getStyleClass().add("login-title");
@@ -59,9 +63,11 @@ public class LoginView {
 
         TextField usernameField = new TextField();
         usernameField.setPromptText("Username");
+        usernameField.getStyleClass().add("login-input");
 
         PasswordField parolaField = new PasswordField();
         parolaField.setPromptText("Parola");
+        parolaField.getStyleClass().add("login-input");
 
         GridPane form = new GridPane();
         form.setHgap(10);
@@ -111,8 +117,12 @@ public class LoginView {
         parolaField.setOnAction(e -> loginAction.run());
 
         card.getChildren().addAll(badge, title, subtitle, form, loginButton);
-        page.getChildren().add(card);
-        root.setCenter(page);
+
+        StackPane.setAlignment(card, Pos.CENTER_RIGHT);
+        StackPane.setMargin(card, new Insets(0, 80, 0, 0));
+
+        loginRoot.getChildren().addAll(overlay, card);
+        root.setCenter(loginRoot);
 
         backgroundRunner.run(() -> {
             authService.creeazaAdminImplicitDacaNuExista();

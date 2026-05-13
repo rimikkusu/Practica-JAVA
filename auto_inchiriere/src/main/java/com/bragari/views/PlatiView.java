@@ -8,10 +8,12 @@ import java.util.function.Supplier;
 import com.bragari.models.Inchiriere;
 import com.bragari.models.Plata;
 import com.bragari.services.AutoInchiriereService;
+import com.bragari.services.SettingsService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.DialogHelper;
 import com.bragari.util.FormValidator;
 import com.bragari.util.SkeletonFactory;
+import com.bragari.util.ViewFactory;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -33,6 +35,7 @@ import javafx.stage.Stage;
 public class PlatiView {
 
     private final AutoInchiriereService service;
+    private final SettingsService settingsService;
     private final BorderPane root;
     private final Supplier<Stage> ownerSupplier;
     private final BackgroundRunner backgroundRunner;
@@ -42,18 +45,21 @@ public class PlatiView {
 
     public PlatiView(AutoInchiriereService service, BorderPane root, Supplier<Stage> ownerSupplier,
                      BackgroundRunner backgroundRunner) {
+        this(service, new SettingsService(), root, ownerSupplier, backgroundRunner);
+    }
+
+    public PlatiView(AutoInchiriereService service, SettingsService settingsService, BorderPane root,
+                     Supplier<Stage> ownerSupplier, BackgroundRunner backgroundRunner) {
         this.service = service;
+        this.settingsService = settingsService;
         this.root = root;
         this.ownerSupplier = ownerSupplier;
         this.backgroundRunner = backgroundRunner;
     }
 
     public void showPlatiPage() {
-        VBox page = new VBox(18);
-        page.getStyleClass().add("page-container");
-
-        Label title = new Label("Gestionare Plati");
-        title.getStyleClass().add("page-title");
+        VBox pageContent = new VBox(16);
+        pageContent.getStyleClass().add("page-content");
 
         platiTable = new TableView<>();
         platiTable.getStyleClass().add("app-table");
@@ -100,7 +106,7 @@ public class PlatiView {
                 dataColumn
         );
 
-        platiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        ViewFactory.styleTable(platiTable);
 
         Button adaugaButton = new Button("Adauga");
         adaugaButton.getStyleClass().add("primary-button");
@@ -119,7 +125,7 @@ public class PlatiView {
         tableContainer.getStyleClass().add("table-content-area");
 
         VBox contentCard = new VBox(14);
-        contentCard.getStyleClass().add("content-card");
+        ViewFactory.asCard(contentCard);
         contentCard.getChildren().addAll(buttons, tableContainer);
 
         adaugaButton.setOnAction(e -> showAddPlataDialog());
@@ -148,7 +154,8 @@ public class PlatiView {
                     return;
                 }
 
-                if (!DialogHelper.confirmaActiune(owner(), "Sigur vrei sa stergi aceasta plata?")) {
+                if (settingsService.isConfirmareStergereActiva()
+                        && !DialogHelper.confirmaActiune(owner(), "Sigur vrei sa stergi aceasta plata?")) {
                     return;
                 }
 
@@ -163,9 +170,9 @@ public class PlatiView {
 
         refreshButton.setOnAction(e -> refreshPlatiTable());
 
-        page.getChildren().addAll(title, contentCard);
+        pageContent.getChildren().add(contentCard);
 
-        root.setCenter(page);
+        root.setCenter(ViewFactory.createPage("Plati", "P", pageContent));
         refreshPlatiTable();
     }
 
@@ -336,7 +343,11 @@ public class PlatiView {
 
     private void arataSkeleton() {
         if (tableContainer != null) {
-            tableContainer.getChildren().setAll(SkeletonFactory.createTableSkeleton(7, 6));
+            tableContainer.getChildren().setAll(
+                    settingsService.folosesteSkeletonLoading()
+                            ? SkeletonFactory.createTableSkeleton(7, 6)
+                            : SkeletonFactory.createSimpleLoading("Se incarca platile...")
+            );
         }
     }
 

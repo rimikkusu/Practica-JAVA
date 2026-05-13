@@ -7,10 +7,12 @@ import java.util.function.Supplier;
 import com.bragari.models.Automobil;
 import com.bragari.models.CategorieAuto;
 import com.bragari.services.AutoInchiriereService;
+import com.bragari.services.SettingsService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.DialogHelper;
 import com.bragari.util.FormValidator;
 import com.bragari.util.SkeletonFactory;
+import com.bragari.util.ViewFactory;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -33,6 +35,7 @@ import javafx.stage.Stage;
 public class AutomobileView {
 
     private final AutoInchiriereService service;
+    private final SettingsService settingsService;
     private final BorderPane root;
     private final Supplier<Stage> ownerSupplier;
     private final BackgroundRunner backgroundRunner;
@@ -43,7 +46,13 @@ public class AutomobileView {
 
     public AutomobileView(AutoInchiriereService service, BorderPane root, Supplier<Stage> ownerSupplier,
                           BackgroundRunner backgroundRunner) {
+        this(service, new SettingsService(), root, ownerSupplier, backgroundRunner);
+    }
+
+    public AutomobileView(AutoInchiriereService service, SettingsService settingsService, BorderPane root,
+                          Supplier<Stage> ownerSupplier, BackgroundRunner backgroundRunner) {
         this.service = service;
+        this.settingsService = settingsService;
         this.root = root;
         this.ownerSupplier = ownerSupplier;
         this.backgroundRunner = backgroundRunner;
@@ -52,11 +61,8 @@ public class AutomobileView {
     public void showAutomobilePage() {
         afiseazaDoarDisponibile = false;
 
-        VBox page = new VBox(18);
-        page.getStyleClass().add("page-container");
-
-        Label title = new Label("Gestionare Automobile");
-        title.getStyleClass().add("page-title");
+        VBox pageContent = new VBox(16);
+        pageContent.getStyleClass().add("page-content");
 
         automobileTable = new TableView<>();
         automobileTable.getStyleClass().add("app-table");
@@ -97,7 +103,12 @@ public class AutomobileView {
                 }
 
                 Label badge = new Label("Da".equals(item) ? "Disponibil" : "Indisponibil");
-                badge.getStyleClass().addAll("status-badge", "Da".equals(item) ? "status-success" : "status-danger");
+                badge.getStyleClass().addAll(
+                        "status-badge",
+                        "badge",
+                        "Da".equals(item) ? "status-success" : "status-danger",
+                        "Da".equals(item) ? "badge-disponibil" : "badge-indisponibil"
+                );
                 setGraphic(badge);
                 setText(null);
             }
@@ -113,7 +124,7 @@ public class AutomobileView {
                 disponibilColumn
         );
 
-        automobileTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        ViewFactory.styleTable(automobileTable);
 
         Button adaugaButton = new Button("Adauga");
         adaugaButton.getStyleClass().add("primary-button");
@@ -140,7 +151,7 @@ public class AutomobileView {
         tableContainer.getStyleClass().add("table-content-area");
 
         VBox contentCard = new VBox(14);
-        contentCard.getStyleClass().add("content-card");
+        ViewFactory.asCard(contentCard);
         contentCard.getChildren().addAll(buttons, tableContainer);
 
         adaugaButton.setOnAction(e -> showAddAutomobilDialog());
@@ -169,7 +180,8 @@ public class AutomobileView {
                     return;
                 }
 
-                if (!DialogHelper.confirmaActiune(owner(), "Sigur vrei sa stergi acest automobil?")) {
+                if (settingsService.isConfirmareStergereActiva()
+                        && !DialogHelper.confirmaActiune(owner(), "Sigur vrei sa stergi acest automobil?")) {
                     return;
                 }
 
@@ -201,9 +213,9 @@ public class AutomobileView {
             }
         });
 
-        page.getChildren().addAll(title, contentCard);
+        pageContent.getChildren().add(contentCard);
 
-        root.setCenter(page);
+        root.setCenter(ViewFactory.createPage("Automobile", "A", pageContent));
         refreshAutomobileTable();
     }
 
@@ -421,7 +433,11 @@ public class AutomobileView {
 
     private void arataSkeleton() {
         if (tableContainer != null) {
-            tableContainer.getChildren().setAll(SkeletonFactory.createTableSkeleton(7, 6));
+            tableContainer.getChildren().setAll(
+                    settingsService.folosesteSkeletonLoading()
+                            ? SkeletonFactory.createTableSkeleton(7, 6)
+                            : SkeletonFactory.createSimpleLoading("Se incarca automobilele...")
+            );
         }
     }
 

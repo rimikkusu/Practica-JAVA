@@ -1,6 +1,9 @@
 package com.bragari.util;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -78,6 +81,22 @@ public class SkeletonFactory {
         }
 
         return pane;
+    }
+
+    public static VBox createSimpleLoading(String message) {
+        VBox loading = new VBox(10);
+        loading.getStyleClass().add("simple-loading");
+        loading.setAlignment(Pos.CENTER);
+        loading.setPadding(new Insets(24));
+
+        ProgressIndicator indicator = new ProgressIndicator();
+        indicator.setMaxSize(34, 34);
+
+        Label label = new Label(message == null || message.isBlank() ? "Se incarca..." : message);
+        label.getStyleClass().add("loading-label");
+
+        loading.getChildren().addAll(indicator, label);
+        return loading;
     }
 
     private static HBox createSkeletonRow(int columns, double height, String boxClass) {

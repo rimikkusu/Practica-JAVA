@@ -1,7 +1,11 @@
 package com.bragari.util;
 
+import java.net.URL;
+
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -18,10 +22,26 @@ public class DialogHelper {
     }
 
     public static void aplicaCss(Scene scene) {
-        String stylesheet = DialogHelper.class.getResource("/styles.css").toExternalForm();
+        adaugaCss(scene.getStylesheets(), "/styles.css");
+        adaugaCss(scene.getStylesheets(), "/com/bragari/styles/application.css");
+    }
 
-        if (!scene.getStylesheets().contains(stylesheet)) {
-            scene.getStylesheets().add(stylesheet);
+    public static void aplicaCss(Parent parent) {
+        adaugaCss(parent.getStylesheets(), "/styles.css");
+        adaugaCss(parent.getStylesheets(), "/com/bragari/styles/application.css");
+    }
+
+    private static void adaugaCss(ObservableList<String> stylesheets, String path) {
+        URL resource = DialogHelper.class.getResource(path);
+
+        if (resource == null) {
+            return;
+        }
+
+        String stylesheet = resource.toExternalForm();
+
+        if (!stylesheets.contains(stylesheet)) {
+            stylesheets.add(stylesheet);
         }
     }
 
@@ -36,7 +56,8 @@ public class DialogHelper {
 
         dialog.setResizable(false);
 
-        content.getStyleClass().addAll("dialog-content", "content-card");
+        content.getStyleClass().addAll("dialog-content", "content-card", "dialog-pane", "card");
+        copiaClaseSetari(owner, content);
         content.setPadding(new Insets(20));
         content.setSpacing(14);
 
@@ -51,9 +72,15 @@ public class DialogHelper {
         if (!primaryButton.getStyleClass().contains("primary-button")) {
             primaryButton.getStyleClass().add("primary-button");
         }
+        if (!primaryButton.getStyleClass().contains("btn-primary")) {
+            primaryButton.getStyleClass().add("btn-primary");
+        }
 
         if (!cancelButton.getStyleClass().contains("secondary-button")) {
             cancelButton.getStyleClass().add("secondary-button");
+        }
+        if (!cancelButton.getStyleClass().contains("btn-secondary")) {
+            cancelButton.getStyleClass().add("btn-secondary");
         }
 
         HBox buttons = new HBox(10);
@@ -77,6 +104,8 @@ public class DialogHelper {
             alert.initOwner(owner);
         }
 
+        stilizeazaAlert(alert, owner);
+
         return alert.showAndWait().orElse(anuleazaButton) == stergeButton;
     }
 
@@ -89,6 +118,8 @@ public class DialogHelper {
         if (owner != null) {
             alert.initOwner(owner);
         }
+
+        stilizeazaAlert(alert, owner);
 
         alert.showAndWait();
     }
@@ -129,6 +160,28 @@ public class DialogHelper {
             alert.initOwner(owner);
         }
 
+        stilizeazaAlert(alert, owner);
+
         alert.showAndWait();
+    }
+
+    private static void stilizeazaAlert(Alert alert, Stage owner) {
+        aplicaCss(alert.getDialogPane());
+        copiaClaseSetari(owner, alert.getDialogPane());
+    }
+
+    private static void copiaClaseSetari(Stage owner, Parent target) {
+        if (owner == null || owner.getScene() == null || owner.getScene().getRoot() == null) {
+            return;
+        }
+
+        for (String styleClass : owner.getScene().getRoot().getStyleClass()) {
+            if ((styleClass.startsWith("theme-")
+                    || styleClass.startsWith("text-")
+                    || styleClass.startsWith("table-"))
+                    && !target.getStyleClass().contains(styleClass)) {
+                target.getStyleClass().add(styleClass);
+            }
+        }
     }
 }

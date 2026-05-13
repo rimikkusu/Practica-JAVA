@@ -12,12 +12,13 @@ import com.bragari.models.Inchiriere;
 import com.bragari.models.Plata;
 import com.bragari.models.StatusInchiriere;
 import com.bragari.services.AutoInchiriereService;
+import com.bragari.services.SettingsService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.CsvExporter;
 import com.bragari.util.DialogHelper;
 import com.bragari.util.SkeletonFactory;
+import com.bragari.util.ViewFactory;
 
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -31,6 +32,7 @@ import javafx.stage.Stage;
 public class RapoarteView {
 
     private final AutoInchiriereService service;
+    private final SettingsService settingsService;
     private final BorderPane root;
     private final Supplier<Stage> ownerSupplier;
     private final BackgroundRunner backgroundRunner;
@@ -39,18 +41,21 @@ public class RapoarteView {
 
     public RapoarteView(AutoInchiriereService service, BorderPane root, Supplier<Stage> ownerSupplier,
                         BackgroundRunner backgroundRunner) {
+        this(service, new SettingsService(), root, ownerSupplier, backgroundRunner);
+    }
+
+    public RapoarteView(AutoInchiriereService service, SettingsService settingsService, BorderPane root,
+                        Supplier<Stage> ownerSupplier, BackgroundRunner backgroundRunner) {
         this.service = service;
+        this.settingsService = settingsService;
         this.root = root;
         this.ownerSupplier = ownerSupplier;
         this.backgroundRunner = backgroundRunner;
     }
 
     public void showRapoartePage() {
-        VBox page = new VBox(18);
-        page.getStyleClass().add("page-container");
-
-        Label title = new Label("Rapoarte");
-        title.getStyleClass().add("page-title");
+        VBox pageContent = new VBox(16);
+        pageContent.getStyleClass().add("page-content");
 
         raportTextArea = new TextArea();
         raportTextArea.setEditable(false);
@@ -84,7 +89,7 @@ public class RapoarteView {
         );
 
         VBox contentCard = new VBox(14);
-        contentCard.getStyleClass().add("content-card");
+        ViewFactory.asCard(contentCard);
         contentCard.getChildren().addAll(buttons, reportContainer);
 
         final String[] tipRaportCurent = {""};
@@ -119,9 +124,9 @@ public class RapoarteView {
         exportTxtButton.setOnAction(e -> exportRaport(raportTextArea, tipRaportCurent[0], false));
         exportCsvButton.setOnAction(e -> exportRaport(raportTextArea, tipRaportCurent[0], true));
 
-        page.getChildren().addAll(title, contentCard);
+        pageContent.getChildren().add(contentCard);
 
-        root.setCenter(page);
+        root.setCenter(ViewFactory.createPage("Rapoarte", "R", pageContent));
     }
 
     private String genereazaRaport(String tipRaport) {
@@ -332,7 +337,11 @@ public class RapoarteView {
 
     private void arataSkeletonRaport() {
         if (reportContainer != null) {
-            reportContainer.getChildren().setAll(SkeletonFactory.createReportSkeleton());
+            reportContainer.getChildren().setAll(
+                    settingsService.folosesteSkeletonLoading()
+                            ? SkeletonFactory.createReportSkeleton()
+                            : SkeletonFactory.createSimpleLoading("Se genereaza raportul...")
+            );
         }
     }
 

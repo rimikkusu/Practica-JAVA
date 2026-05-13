@@ -1,7 +1,5 @@
 package com.bragari;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -10,6 +8,7 @@ import com.bragari.database.DatabaseManager;
 import com.bragari.models.Utilizator;
 import com.bragari.services.AuthService;
 import com.bragari.services.AutoInchiriereService;
+import com.bragari.services.SettingsService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.DialogHelper;
 import com.bragari.views.AutomobileView;
@@ -19,13 +18,13 @@ import com.bragari.views.InchirieriView;
 import com.bragari.views.LoginView;
 import com.bragari.views.PlatiView;
 import com.bragari.views.RapoarteView;
+import com.bragari.views.SetariView;
 import com.bragari.views.UtilizatoriView;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -41,6 +40,7 @@ public class MainApp extends Application {
     private StackPane appRoot;
     private AutoInchiriereService service;
     private AuthService authService;
+    private SettingsService settingsService;
     private Utilizator utilizatorCurent;
     private boolean afiseazaDoarDisponibile = false;
     private String paginaActiva = "dashboard";
@@ -49,11 +49,13 @@ public class MainApp extends Application {
     public void start(Stage stage) {
         service = new AutoInchiriereService();
         authService = new AuthService();
+        settingsService = new SettingsService();
 
         root = new BorderPane();
         root.getStyleClass().add("app-shell");
         appRoot = new StackPane(root);
         appRoot.getStyleClass().add("app-root-stack");
+        aplicaSetariVizuale();
 
         Scene scene = new Scene(appRoot, 1000, 600);
         aplicaCss(scene);
@@ -125,13 +127,30 @@ public class MainApp extends Application {
 
     private void showMainPage(Utilizator utilizator) {
         utilizatorCurent = utilizator;
-        deschidePagina("dashboard", this::showDashboardPage);
+        String paginaImplicita = settingsService.getPaginaImplicitaKey();
+        deschidePagina(paginaImplicita, () -> afiseazaPagina(paginaImplicita));
     }
 
     private void showDashboardPage() {
         Supplier<Stage> ownerSupplier = () -> root.getScene() == null ? null : (Stage) root.getScene().getWindow();
-        DashboardView dashboardView = new DashboardView(service, root, ownerSupplier, this::runInBackground);
+        DashboardView dashboardView = new DashboardView(service, settingsService, root, ownerSupplier, this::runInBackground);
         dashboardView.showDashboardPage();
+    }
+
+    private void afiseazaPagina(String pagina) {
+        Supplier<Stage> ownerSupplier = () -> root.getScene() == null ? null : (Stage) root.getScene().getWindow();
+        BackgroundRunner backgroundRunner = this::runInBackground;
+
+        switch (pagina) {
+            case "clienti" -> new ClientiView(service, settingsService, root, ownerSupplier, backgroundRunner).showClientiPage();
+            case "automobile" -> new AutomobileView(service, settingsService, root, ownerSupplier, backgroundRunner).showAutomobilePage();
+            case "inchirieri" -> new InchirieriView(service, settingsService, root, ownerSupplier, backgroundRunner).showInchirieriPage();
+            case "plati" -> new PlatiView(service, settingsService, root, ownerSupplier, backgroundRunner).showPlatiPage();
+            case "rapoarte" -> new RapoarteView(service, settingsService, root, ownerSupplier, backgroundRunner).showRapoartePage();
+            case "setari" -> new SetariView(settingsService, root, ownerSupplier, this::aplicaSetariVizuale).showSetariPage();
+            case "utilizatori" -> new UtilizatoriView(authService, settingsService, root, ownerSupplier, backgroundRunner, () -> utilizatorCurent).showUtilizatoriPage();
+            default -> showDashboardPage();
+        }
     }
 
     private void deschidePagina(String pagina, Runnable action) {
@@ -141,125 +160,115 @@ public class MainApp extends Application {
     }
 
     private VBox createMenu() {
-        VBox menu = new VBox(10);
+        VBox menu = new VBox();
         menu.getStyleClass().add("sidebar");
 
         Supplier<Stage> ownerSupplier = () -> root.getScene() == null ? null : (Stage) root.getScene().getWindow();
         BackgroundRunner backgroundRunner = this::runInBackground;
 
-        DashboardView dashboardView = new DashboardView(service, root, ownerSupplier, backgroundRunner);
-        ClientiView clientiView = new ClientiView(service, root, ownerSupplier, backgroundRunner);
-        AutomobileView automobileView = new AutomobileView(service, root, ownerSupplier, backgroundRunner);
-        InchirieriView inchirieriView = new InchirieriView(service, root, ownerSupplier, backgroundRunner);
-        PlatiView platiView = new PlatiView(service, root, ownerSupplier, backgroundRunner);
-        RapoarteView rapoarteView = new RapoarteView(service, root, ownerSupplier, backgroundRunner);
-        UtilizatoriView utilizatoriView = new UtilizatoriView(authService, root, ownerSupplier, backgroundRunner, () -> utilizatorCurent);
+        DashboardView dashboardView = new DashboardView(service, settingsService, root, ownerSupplier, backgroundRunner);
+        ClientiView clientiView = new ClientiView(service, settingsService, root, ownerSupplier, backgroundRunner);
+        AutomobileView automobileView = new AutomobileView(service, settingsService, root, ownerSupplier, backgroundRunner);
+        InchirieriView inchirieriView = new InchirieriView(service, settingsService, root, ownerSupplier, backgroundRunner);
+        PlatiView platiView = new PlatiView(service, settingsService, root, ownerSupplier, backgroundRunner);
+        RapoarteView rapoarteView = new RapoarteView(service, settingsService, root, ownerSupplier, backgroundRunner);
+        SetariView setariView = new SetariView(settingsService, root, ownerSupplier, this::aplicaSetariVizuale);
+        UtilizatoriView utilizatoriView = new UtilizatoriView(authService, settingsService, root, ownerSupplier, backgroundRunner, () -> utilizatorCurent);
 
-        VBox brand = new VBox(4);
-        brand.getStyleClass().add("sidebar-brand");
-        Label brandBadge = new Label("AI");
-        brandBadge.getStyleClass().add("brand-badge");
-        Label brandTitle = new Label("Auto Inchiriere");
-        brandTitle.getStyleClass().add("brand-title");
-        Label brandSubtitle = new Label("Amber Noir UI");
-        brandSubtitle.getStyleClass().add("brand-subtitle");
-        brand.getChildren().addAll(brandBadge, brandTitle, brandSubtitle);
+        VBox header = new VBox(6);
+        header.getStyleClass().add("sidebar-header");
 
-        VBox navBox = new VBox(6);
+        StackPane logoMark = new StackPane();
+        logoMark.getStyleClass().add("sidebar-logo-mark");
+        Label logoText = new Label("A");
+        logoText.getStyleClass().add("sidebar-logo-text");
+        logoMark.getChildren().add(logoText);
+
+        Label appName = new Label("AutoFleet");
+        appName.getStyleClass().add("sidebar-app-name");
+        Label version = new Label("v2.0 Pro");
+        version.getStyleClass().add("sidebar-version");
+        header.getChildren().addAll(logoMark, appName, version);
+
+        VBox navBox = new VBox();
         navBox.getStyleClass().add("sidebar-nav");
 
-        Button dashboardButton = new Button("Dashboard");
-        Button clientiButton = new Button("Clienti");
-        Button automobileButton = new Button("Automobile");
-        Button inchirieriButton = new Button("Inchirieri");
-        Button platiButton = new Button("Plati");
-        Button rapoarteButton = new Button("Rapoarte");
-        Button utilizatoriButton = new Button("Utilizatori");
-        Button logoutButton = new Button("Logout");
-
-        List<Button> navButtons = new ArrayList<>();
-        navButtons.add(dashboardButton);
-        navButtons.add(clientiButton);
-        navButtons.add(automobileButton);
-        navButtons.add(inchirieriButton);
-        navButtons.add(platiButton);
-        navButtons.add(rapoarteButton);
-        navButtons.add(utilizatoriButton);
-
-        for (Button navButton : navButtons) {
-            navButton.getStyleClass().add("nav-button");
-            navButton.setMaxWidth(Double.MAX_VALUE);
-        }
-
-        logoutButton.getStyleClass().add("logout-button");
-        clientiButton.setMaxWidth(Double.MAX_VALUE);
-        automobileButton.setMaxWidth(Double.MAX_VALUE);
-        inchirieriButton.setMaxWidth(Double.MAX_VALUE);
-        platiButton.setMaxWidth(Double.MAX_VALUE);
-        rapoarteButton.setMaxWidth(Double.MAX_VALUE);
-        utilizatoriButton.setMaxWidth(Double.MAX_VALUE);
-        logoutButton.setMaxWidth(Double.MAX_VALUE);
-
-        actualizeazaStareButon(dashboardButton, "dashboard");
-        actualizeazaStareButon(clientiButton, "clienti");
-        actualizeazaStareButon(automobileButton, "automobile");
-        actualizeazaStareButon(inchirieriButton, "inchirieri");
-        actualizeazaStareButon(platiButton, "plati");
-        actualizeazaStareButon(rapoarteButton, "rapoarte");
-        actualizeazaStareButon(utilizatoriButton, "utilizatori");
-
-        dashboardButton.setOnAction(e -> deschidePagina("dashboard", dashboardView::showDashboardPage));
-        clientiButton.setOnAction(e -> deschidePagina("clienti", clientiView::showClientiPage));
-        automobileButton.setOnAction(e -> deschidePagina("automobile", automobileView::showAutomobilePage));
-        inchirieriButton.setOnAction(e -> deschidePagina("inchirieri", inchirieriView::showInchirieriPage));
-        platiButton.setOnAction(e -> deschidePagina("plati", platiView::showPlatiPage));
-        rapoarteButton.setOnAction(e -> deschidePagina("rapoarte", rapoarteView::showRapoartePage));
-        utilizatoriButton.setOnAction(e -> deschidePagina("utilizatori", utilizatoriView::showUtilizatoriPage));
-        logoutButton.setOnAction(e -> showLoginPage());
-
         navBox.getChildren().addAll(
-                dashboardButton,
-                clientiButton,
-                automobileButton,
-                inchirieriButton,
-                platiButton,
-                rapoarteButton
+                createNavItem("Dashboard", "D", "dashboard", dashboardView::showDashboardPage),
+                createNavItem("Clienti", "C", "clienti", clientiView::showClientiPage),
+                createNavItem("Automobile", "A", "automobile", automobileView::showAutomobilePage),
+                createNavItem("Inchirieri", "I", "inchirieri", inchirieriView::showInchirieriPage),
+                createNavItem("Plati", "P", "plati", platiView::showPlatiPage),
+                createNavItem("Rapoarte", "R", "rapoarte", rapoarteView::showRapoartePage)
         );
 
         if (utilizatorCurent != null && "ADMIN".equalsIgnoreCase(utilizatorCurent.getRol())) {
-            navBox.getChildren().add(utilizatoriButton);
+            Region separator = new Region();
+            separator.getStyleClass().add("nav-separator");
+            navBox.getChildren().addAll(
+                    separator,
+                    createNavItem("Utilizatori", "U", "utilizatori", utilizatoriView::showUtilizatoriPage)
+            );
         }
 
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
         HBox footerTop = new HBox(8);
+        footerTop.setAlignment(Pos.CENTER_LEFT);
         Label avatarBadge = new Label(initialeUtilizatorCurent());
-        avatarBadge.getStyleClass().add("avatar-badge");
+        avatarBadge.getStyleClass().add("sidebar-avatar");
         VBox footerText = new VBox(2);
         Label usernameLabel = new Label(utilizatorCurent == null ? "guest" : utilizatorCurent.getUsername());
-        usernameLabel.getStyleClass().add("sidebar-user-name");
+        usernameLabel.getStyleClass().add("sidebar-username");
         Label roleLabel = new Label(utilizatorCurent == null ? "Vizitator" : utilizatorCurent.getRol());
-        roleLabel.getStyleClass().add("sidebar-user-role");
+        roleLabel.getStyleClass().add("sidebar-role");
         footerText.getChildren().addAll(usernameLabel, roleLabel);
         footerTop.getChildren().addAll(avatarBadge, footerText);
 
         VBox footer = new VBox(10);
         footer.getStyleClass().add("sidebar-footer");
-        footer.getChildren().addAll(logoutButton, footerTop);
+        HBox setariItem = createNavItem("Setari", "S", "setari", setariView::showSetariPage);
+        setariItem.getStyleClass().add("sidebar-footer-action");
 
-        menu.getChildren().addAll(brand, navBox, spacer, footer);
+        HBox logoutItem = createSidebarActionItem("Logout", "X", this::showLoginPage);
+        logoutItem.getStyleClass().add("sidebar-footer-action");
+
+        footer.getChildren().addAll(setariItem, logoutItem, footerTop);
+
+        menu.getChildren().addAll(header, navBox, spacer, footer);
 
         return menu;
     }
 
-    private void actualizeazaStareButon(Button button, String pagina) {
-        if (button.getStyleClass().contains("nav-button-active")) {
-            button.getStyleClass().remove("nav-button-active");
+    private HBox createNavItem(String labelText, String iconText, String pagina, Runnable action) {
+        HBox item = createSidebarActionItem(labelText, iconText, () -> deschidePagina(pagina, action));
+        actualizeazaStareItem(item, pagina);
+        return item;
+    }
+
+    private HBox createSidebarActionItem(String labelText, String iconText, Runnable action) {
+        HBox item = new HBox(8);
+        item.getStyleClass().add("nav-item");
+        item.setAlignment(Pos.CENTER_LEFT);
+
+        Label icon = new Label(iconText);
+        icon.getStyleClass().add("nav-icon");
+        Label label = new Label(labelText);
+        label.getStyleClass().add("nav-label");
+
+        item.getChildren().addAll(icon, label);
+        item.setOnMouseClicked(e -> action.run());
+        return item;
+    }
+
+    private void actualizeazaStareItem(HBox item, String pagina) {
+        if (item.getStyleClass().contains("active")) {
+            item.getStyleClass().remove("active");
         }
 
         if (pagina.equals(paginaActiva)) {
-            button.getStyleClass().add("nav-button-active");
+            item.getStyleClass().add("active");
         }
     }
 
@@ -270,6 +279,29 @@ public class MainApp extends Application {
 
         String username = utilizatorCurent.getUsername().trim().toUpperCase();
         return username.length() >= 2 ? username.substring(0, 2) : username;
+    }
+
+    private void aplicaSetariVizuale() {
+        if (appRoot == null || settingsService == null) {
+            return;
+        }
+
+        appRoot.getStyleClass().removeAll(
+                "theme-amber",
+                "theme-light",
+                "theme-dark",
+                "text-small",
+                "text-normal",
+                "text-large",
+                "table-compact",
+                "table-normal"
+        );
+
+        appRoot.getStyleClass().addAll(
+                settingsService.getTemaCssClass(),
+                settingsService.getTextCssClass(),
+                settingsService.getTableCssClass()
+        );
     }
 
     public static void main(String[] args) {
