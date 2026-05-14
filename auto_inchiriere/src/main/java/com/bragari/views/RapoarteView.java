@@ -24,6 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -56,15 +57,18 @@ public class RapoarteView {
     public void showRapoartePage() {
         VBox pageContent = new VBox(16);
         pageContent.getStyleClass().add("page-content");
+        pageContent.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         raportTextArea = new TextArea();
         raportTextArea.setEditable(false);
         raportTextArea.setWrapText(false);
-        raportTextArea.setPrefRowCount(25);
+        raportTextArea.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         raportTextArea.getStyleClass().add("report-area");
 
         reportContainer = new StackPane();
         reportContainer.getStyleClass().add("report-content-area");
+        reportContainer.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        VBox.setVgrow(reportContainer, Priority.ALWAYS);
         reportContainer.getChildren().add(raportTextArea);
 
         Button raportClientiButton = new Button("Raport clienti");
@@ -90,6 +94,7 @@ public class RapoarteView {
 
         VBox contentCard = new VBox(14);
         ViewFactory.asCard(contentCard);
+        VBox.setVgrow(contentCard, Priority.ALWAYS);
         contentCard.getChildren().addAll(buttons, reportContainer);
 
         final String[] tipRaportCurent = {""};

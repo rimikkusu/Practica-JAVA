@@ -19,6 +19,7 @@ public class SkeletonFactory {
         VBox skeleton = new VBox(10);
         skeleton.getStyleClass().add("skeleton-table");
         skeleton.setPadding(new Insets(4, 0, 4, 0));
+        skeleton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         skeleton.getChildren().add(createSkeletonRow(columns, 18, "skeleton-header-box"));
 
@@ -33,6 +34,7 @@ public class SkeletonFactory {
         VBox skeleton = new VBox(10);
         skeleton.getStyleClass().add("skeleton-report");
         skeleton.setPadding(new Insets(8));
+        skeleton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         for (int i = 0; i < 9; i++) {
             Region line = new Region();
@@ -88,6 +90,7 @@ public class SkeletonFactory {
         loading.getStyleClass().add("simple-loading");
         loading.setAlignment(Pos.CENTER);
         loading.setPadding(new Insets(24));
+        loading.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         ProgressIndicator indicator = new ProgressIndicator();
         indicator.setMaxSize(34, 34);

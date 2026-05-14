@@ -22,6 +22,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -54,7 +55,8 @@ public class UtilizatoriView {
 
     public void showUtilizatoriPage() {
         VBox pageContent = new VBox(16);
-        pageContent.getStyleClass().add("page-content");
+        pageContent.getStyleClass().addAll("page-content", "table-page-background");
+        pageContent.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         utilizatoriTable = new TableView<>();
         utilizatoriTable.getStyleClass().add("app-table");
@@ -109,6 +111,8 @@ public class UtilizatoriView {
 
         VBox contentCard = new VBox(14);
         ViewFactory.asCard(contentCard);
+        VBox.setVgrow(contentCard, Priority.ALWAYS);
+        VBox.setVgrow(utilizatoriTable, Priority.ALWAYS);
         contentCard.getChildren().addAll(buttons, utilizatoriTable);
 
         adaugaButton.setOnAction(e -> showAddUtilizatorDialog());

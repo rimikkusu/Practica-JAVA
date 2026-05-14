@@ -8,6 +8,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class ViewFactory {
@@ -18,13 +19,39 @@ public class ViewFactory {
     public static VBox createPage(String pageTitle, String pageIcon, Node content, Node... actions) {
         VBox page = new VBox();
         page.getStyleClass().add("page-container");
+        page.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+        Node pageContent = content;
+        boolean needsTableBackground = content.getStyleClass().contains("table-page-background");
 
         if (!content.getStyleClass().contains("page-content")) {
             content.getStyleClass().add("page-content");
         }
+        if (content instanceof Region region) {
+            region.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        }
         VBox.setVgrow(content, Priority.ALWAYS);
 
-        page.getChildren().addAll(createTopBar(pageTitle, pageIcon, actions), content);
+        if (needsTableBackground) {
+            content.getStyleClass().remove("table-page-background");
+            if (!content.getStyleClass().contains("table-page-content")) {
+                content.getStyleClass().add("table-page-content");
+            }
+
+            StackPane backgroundPane = new StackPane();
+            backgroundPane.getStyleClass().add("table-page-background");
+            backgroundPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+            Region overlay = new Region();
+            overlay.getStyleClass().add("table-page-overlay");
+            overlay.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+            backgroundPane.getChildren().addAll(overlay, content);
+            VBox.setVgrow(backgroundPane, Priority.ALWAYS);
+            pageContent = backgroundPane;
+        }
+
+        page.getChildren().addAll(createTopBar(pageTitle, pageIcon, actions), pageContent);
         return page;
     }
 
@@ -63,6 +90,8 @@ public class ViewFactory {
             table.getStyleClass().add("app-table");
         }
 
+        table.setMaxWidth(Double.MAX_VALUE);
+        table.setMaxHeight(Double.MAX_VALUE);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         for (TableColumn<?, ?> column : table.getColumns()) {
@@ -77,6 +106,10 @@ public class ViewFactory {
 
         if (!node.getStyleClass().contains("content-card")) {
             node.getStyleClass().add("content-card");
+        }
+
+        if (node instanceof Region region) {
+            region.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         }
 
         return node;

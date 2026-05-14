@@ -50,7 +50,7 @@ public class LoginView {
         VBox card = new VBox(14);
         card.getStyleClass().add("login-card");
         card.setAlignment(Pos.CENTER);
-        card.setMaxWidth(360);
+        card.setMaxWidth(380);
 
         Label badge = new Label("AI");
         badge.getStyleClass().addAll("login-logo-box", "login-badge");
@@ -119,7 +119,7 @@ public class LoginView {
         card.getChildren().addAll(badge, title, subtitle, form, loginButton);
 
         StackPane.setAlignment(card, Pos.CENTER_RIGHT);
-        StackPane.setMargin(card, new Insets(0, 80, 0, 0));
+        StackPane.setMargin(card, new Insets(0, 100, 0, 0));
 
         loginRoot.getChildren().addAll(overlay, card);
         root.setCenter(loginRoot);
