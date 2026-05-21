@@ -1,7 +1,10 @@
 package com.bragari.views;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
@@ -17,6 +20,7 @@ import com.bragari.util.FormValidator;
 import com.bragari.util.SkeletonFactory;
 import com.bragari.util.ViewFactory;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
@@ -36,6 +40,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class InchirieriView {
+
+    private static final DecimalFormat SUMA_FORMAT =
+            new DecimalFormat("0.##", DecimalFormatSymbols.getInstance(Locale.US));
 
     private final AutoInchiriereService service;
     private final SettingsService settingsService;
@@ -94,10 +101,23 @@ public class InchirieriView {
                 new SimpleStringProperty(data.getValue().getDataSfarsit().toString())
         );
 
-        TableColumn<Inchiriere, String> totalColumn = new TableColumn<>("Total");
+        TableColumn<Inchiriere, Double> totalColumn = new TableColumn<>("Total");
         totalColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(data.getValue().calculeazaTotal() + " lei")
+                new SimpleObjectProperty<>(data.getValue().calculeazaTotal())
         );
+        totalColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                    return;
+                }
+
+                setText(SUMA_FORMAT.format(item) + " lei");
+            }
+        });
 
         TableColumn<Inchiriere, String> statusColumn = new TableColumn<>("Status");
         statusColumn.setCellValueFactory(data ->
@@ -117,12 +137,10 @@ public class InchirieriView {
                 Label badge = new Label(item);
                 badge.getStyleClass().addAll("status-badge", "badge");
 
-                if ("ACTIVA".equalsIgnoreCase(item)) {
-                    badge.getStyleClass().addAll("status-success", "badge-activa");
-                } else if ("ANULATA".equalsIgnoreCase(item)) {
-                    badge.getStyleClass().addAll("status-danger", "badge-anulata");
-                } else {
-                    badge.getStyleClass().addAll("status-neutral", "badge-finalizata");
+                switch (item.toUpperCase()) {
+                    case "ACTIVA"    -> badge.getStyleClass().addAll("status-success", "badge-activa");
+                    case "ANULATA"   -> badge.getStyleClass().addAll("status-danger", "badge-anulata");
+                    default          -> badge.getStyleClass().addAll("status-neutral", "badge-finalizata");
                 }
 
                 setGraphic(badge);

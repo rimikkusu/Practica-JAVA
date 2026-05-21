@@ -98,31 +98,22 @@ public class FormValidator {
         }
     }
 
-    public static double parseazaPret(String pretText) {
+    private static double parseazaNumar(String text, String numeCamp) {
         try {
-            double pret = Double.parseDouble(pretText);
-
-            if (Double.isNaN(pret) || Double.isInfinite(pret) || pret < 0) {
-                throw new IllegalArgumentException("Pretul trebuie sa fie un numar valid si pozitiv.");
-            }
-
-            return pret;
+            double val = Double.parseDouble(text);
+            if (Double.isNaN(val) || Double.isInfinite(val) || val < 0)
+                throw new IllegalArgumentException(numeCamp + " trebuie sa fie un numar valid si pozitiv.");
+            return val;
         } catch (NumberFormatException ex) {
-            throw new IllegalArgumentException("Pretul trebuie sa fie un numar valid.");
+            throw new IllegalArgumentException(numeCamp + " trebuie sa fie un numar valid.");
         }
     }
 
+    public static double parseazaPret(String pretText) {
+        return parseazaNumar(pretText, "Pretul");
+    }
+
     public static double parseazaSuma(String sumaText) {
-        try {
-            double suma = Double.parseDouble(sumaText);
-
-            if (Double.isNaN(suma) || Double.isInfinite(suma) || suma < 0) {
-                throw new IllegalArgumentException("Suma trebuie sa fie un numar valid si pozitiv.");
-            }
-
-            return suma;
-        } catch (NumberFormatException ex) {
-            throw new IllegalArgumentException("Suma trebuie sa fie un numar valid.");
-        }
+        return parseazaNumar(sumaText, "Suma");
     }
 }

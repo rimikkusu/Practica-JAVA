@@ -1,183 +1,71 @@
 package com.bragari.repositories;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.bragari.database.DatabaseManager;
+import com.bragari.database.SqlHelper;
 import com.bragari.models.Client;
 
 public class ClientRepository implements CrudRepository<Client> {
 
-    @Override
-    public void adauga(Client client) {
-        String sql = "INSERT INTO clienti (nume, telefon, email) VALUES (?, ?, ?) RETURNING id";
+    private static final String SELECT = "SELECT id, nume, telefon, email FROM clienti";
 
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, client.getNume());
-            statement.setString(2, client.getTelefon());
-            statement.setString(3, client.getEmail());
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    client.setId(resultSet.getInt("id"));
-                }
-            }
-
-        } catch (Exception e) {
-    if (e.getMessage().contains("duplicate key")) {
-        throw new RuntimeException("Există deja un client cu acest email.");
+    private Client map(java.sql.ResultSet rs) throws java.sql.SQLException {
+        return new Client(rs.getInt("id"), rs.getString("nume"),
+                rs.getString("telefon"), rs.getString("email"));
     }
 
-    throw new RuntimeException("Eroare la adăugarea clientului: " + e.getMessage());
+    @Override
+    public void adauga(Client client) {
+        try {
+            int id = SqlHelper.insertReturningId(
+                    "INSERT INTO clienti (nume, telefon, email) VALUES (?, ?, ?) RETURNING id",
+                    ps -> { ps.setString(1, client.getNume()); ps.setString(2, client.getTelefon()); ps.setString(3, client.getEmail()); }
+            );
+            client.setId(id);
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("duplicate key"))
+                throw new RuntimeException("Există deja un client cu acest email.");
+            throw e;
         }
     }
 
     @Override
     public List<Client> obtineToate() {
-        List<Client> clienti = new ArrayList<>();
-        String sql = "SELECT id, nume, telefon, email FROM clienti ORDER BY id";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                Client client = new Client(
-                        resultSet.getInt("id"),
-                        resultSet.getString("nume"),
-                        resultSet.getString("telefon"),
-                        resultSet.getString("email")
-                );
-
-                clienti.add(client);
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Eroare la citirea clienților: " + e.getMessage());
-        }
-
-        return clienti;
+        return SqlHelper.queryList(SELECT + " ORDER BY id", null, this::map);
     }
 
     @Override
     public Client cautaDupaId(int id) {
-        String sql = "SELECT id, nume, telefon, email FROM clienti WHERE id = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1, id);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return new Client(
-                            resultSet.getInt("id"),
-                            resultSet.getString("nume"),
-                            resultSet.getString("telefon"),
-                            resultSet.getString("email")
-                    );
-                }
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Eroare la căutarea clientului: " + e.getMessage());
-        }
-
-        return null;
+        return SqlHelper.queryOne(SELECT + " WHERE id = ?", ps -> ps.setInt(1, id), this::map).orElse(null);
     }
 
     @Override
     public void actualizeaza(Client client) {
-        String sql = "UPDATE clienti SET nume = ?, telefon = ?, email = ? WHERE id = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, client.getNume());
-            statement.setString(2, client.getTelefon());
-            statement.setString(3, client.getEmail());
-            statement.setInt(4, client.getId());
-
-            int rows = statement.executeUpdate();
-
-            if (rows == 0) {
-                throw new RuntimeException("Clientul nu există.");
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Eroare la actualizarea clientului: " + e.getMessage());
-        }
+        int rows = SqlHelper.update(
+                "UPDATE clienti SET nume = ?, telefon = ?, email = ? WHERE id = ?",
+                ps -> { ps.setString(1, client.getNume()); ps.setString(2, client.getTelefon());
+                        ps.setString(3, client.getEmail()); ps.setInt(4, client.getId()); }
+        );
+        if (rows == 0) throw new RuntimeException("Eroare la actualizarea clientului: Clientul nu există.");
     }
 
     @Override
-public void sterge(int id) {
-    String checkSql = "SELECT COUNT(*) FROM inchirieri WHERE client_id = ?";
-    String deleteSql = "DELETE FROM clienti WHERE id = ?";
-
-    try (Connection connection = DatabaseManager.getConnection()) {
-
-        try (PreparedStatement checkStatement = connection.prepareStatement(checkSql)) {
-            checkStatement.setInt(1, id);
-
-            try (ResultSet resultSet = checkStatement.executeQuery()) {
-                if (resultSet.next() && resultSet.getInt(1) > 0) {
-                    throw new RuntimeException("Clientul nu poate fi sters deoarece are inchirieri inregistrate.");
-                }
-            }
-        }
-
-        try (PreparedStatement deleteStatement = connection.prepareStatement(deleteSql)) {
-            deleteStatement.setInt(1, id);
-
-            int rows = deleteStatement.executeUpdate();
-
-            if (rows == 0) {
-                throw new RuntimeException("Clientul nu exista.");
-            }
-        }
-
-    } catch (Exception e) {
-        throw new RuntimeException("Eroare la stergerea clientului: " + e.getMessage());
+    public void sterge(int id) {
+        int count = SqlHelper.queryOne(
+                "SELECT COUNT(*) FROM inchirieri WHERE client_id = ?",
+                ps -> ps.setInt(1, id),
+                rs -> rs.getInt(1)
+        ).orElse(0);
+        if (count > 0)
+            throw new RuntimeException("Clientul nu poate fi sters deoarece are inchirieri inregistrate.");
+        SqlHelper.update("DELETE FROM clienti WHERE id = ?", ps -> ps.setInt(1, id));
     }
-}
 
     public List<Client> cautaDupaNume(String numeCautat) {
-    List<Client> clienti = new ArrayList<>();
-
-    String sql = """
-            SELECT id, nume, telefon, email
-            FROM clienti
-            WHERE LOWER(nume) LIKE LOWER(?)
-            ORDER BY id
-            """;
-
-    try (Connection connection = DatabaseManager.getConnection();
-         PreparedStatement statement = connection.prepareStatement(sql)) {
-
-        statement.setString(1, "%" + numeCautat + "%");
-
-        try (ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                Client client = new Client(
-                        resultSet.getInt("id"),
-                        resultSet.getString("nume"),
-                        resultSet.getString("telefon"),
-                        resultSet.getString("email")
-                );
-
-                clienti.add(client);
-            }
-        }
-
-    } catch (Exception e) {
-        throw new RuntimeException("Eroare la cautarea clientilor: " + e.getMessage());
+        return SqlHelper.queryList(
+                SELECT + " WHERE LOWER(nume) LIKE LOWER(?) ORDER BY id",
+                ps -> ps.setString(1, "%" + numeCautat + "%"),
+                this::map
+        );
     }
-
-    return clienti;
-}
 }

@@ -166,40 +166,30 @@ public class MainApp extends Application {
         Supplier<Stage> ownerSupplier = () -> root.getScene() == null ? null : (Stage) root.getScene().getWindow();
         BackgroundRunner backgroundRunner = this::runInBackground;
 
-        DashboardView dashboardView = new DashboardView(service, settingsService, root, ownerSupplier, backgroundRunner);
-        ClientiView clientiView = new ClientiView(service, settingsService, root, ownerSupplier, backgroundRunner);
-        AutomobileView automobileView = new AutomobileView(service, settingsService, root, ownerSupplier, backgroundRunner);
-        InchirieriView inchirieriView = new InchirieriView(service, settingsService, root, ownerSupplier, backgroundRunner);
-        PlatiView platiView = new PlatiView(service, settingsService, root, ownerSupplier, backgroundRunner);
-        RapoarteView rapoarteView = new RapoarteView(service, settingsService, root, ownerSupplier, backgroundRunner);
-        SetariView setariView = new SetariView(settingsService, root, ownerSupplier, this::aplicaSetariVizuale);
-        UtilizatoriView utilizatoriView = new UtilizatoriView(authService, settingsService, root, ownerSupplier, backgroundRunner, () -> utilizatorCurent);
-
         VBox header = new VBox(6);
         header.getStyleClass().add("sidebar-header");
-
-        StackPane logoMark = new StackPane();
-        logoMark.getStyleClass().add("sidebar-logo-mark");
-        Label logoText = new Label("A");
-        logoText.getStyleClass().add("sidebar-logo-text");
-        logoMark.getChildren().add(logoText);
+        header.setAlignment(Pos.CENTER_LEFT);
 
         Label appName = new Label("AutoFleet");
-        appName.getStyleClass().add("sidebar-app-name");
-        Label version = new Label("v2.0 Pro");
-        version.getStyleClass().add("sidebar-version");
-        header.getChildren().addAll(logoMark, appName, version);
+        appName.getStyleClass().addAll("sidebar-app-name", "sidebar-brand-title");
+        header.getChildren().add(appName);
 
         VBox navBox = new VBox();
         navBox.getStyleClass().add("sidebar-nav");
 
         navBox.getChildren().addAll(
-                createNavItem("Dashboard", "D", "dashboard", dashboardView::showDashboardPage),
-                createNavItem("Clienti", "C", "clienti", clientiView::showClientiPage),
-                createNavItem("Automobile", "A", "automobile", automobileView::showAutomobilePage),
-                createNavItem("Inchirieri", "I", "inchirieri", inchirieriView::showInchirieriPage),
-                createNavItem("Plati", "P", "plati", platiView::showPlatiPage),
-                createNavItem("Rapoarte", "R", "rapoarte", rapoarteView::showRapoartePage)
+                createNavItem("Dashboard", "D", "dashboard",
+                        () -> new DashboardView(service, settingsService, root, ownerSupplier, backgroundRunner).showDashboardPage()),
+                createNavItem("Clienti", "C", "clienti",
+                        () -> new ClientiView(service, settingsService, root, ownerSupplier, backgroundRunner).showClientiPage()),
+                createNavItem("Automobile", "A", "automobile",
+                        () -> new AutomobileView(service, settingsService, root, ownerSupplier, backgroundRunner).showAutomobilePage()),
+                createNavItem("Inchirieri", "I", "inchirieri",
+                        () -> new InchirieriView(service, settingsService, root, ownerSupplier, backgroundRunner).showInchirieriPage()),
+                createNavItem("Plati", "P", "plati",
+                        () -> new PlatiView(service, settingsService, root, ownerSupplier, backgroundRunner).showPlatiPage()),
+                createNavItem("Rapoarte", "R", "rapoarte",
+                        () -> new RapoarteView(service, settingsService, root, ownerSupplier, backgroundRunner).showRapoartePage())
         );
 
         if (utilizatorCurent != null && "ADMIN".equalsIgnoreCase(utilizatorCurent.getRol())) {
@@ -207,7 +197,8 @@ public class MainApp extends Application {
             separator.getStyleClass().add("nav-separator");
             navBox.getChildren().addAll(
                     separator,
-                    createNavItem("Utilizatori", "U", "utilizatori", utilizatoriView::showUtilizatoriPage)
+                    createNavItem("Utilizatori", "U", "utilizatori",
+                            () -> new UtilizatoriView(authService, settingsService, root, ownerSupplier, backgroundRunner, () -> utilizatorCurent).showUtilizatoriPage())
             );
         }
 
@@ -228,7 +219,8 @@ public class MainApp extends Application {
 
         VBox footer = new VBox(10);
         footer.getStyleClass().add("sidebar-footer");
-        HBox setariItem = createNavItem("Setari", "S", "setari", setariView::showSetariPage);
+        HBox setariItem = createNavItem("Setari", "S", "setari",
+                () -> new SetariView(settingsService, root, ownerSupplier, this::aplicaSetariVizuale).showSetariPage());
         setariItem.getStyleClass().add("sidebar-footer-action");
 
         HBox logoutItem = createSidebarActionItem("Logout", "X", this::showLoginPage);

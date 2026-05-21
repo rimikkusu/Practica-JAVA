@@ -150,13 +150,16 @@ public class RapoarteView {
         return "";
     }
 
+    private static String linie(String label, Object valoare) {
+        return label + ": " + valoare + System.lineSeparator();
+    }
+
     private String genereazaRaportClienti() {
         List<Client> clienti = service.obtineClienti();
         StringBuilder raport = new StringBuilder();
-
         raport.append("RAPORT CLIENTI").append(System.lineSeparator());
         raport.append("====================").append(System.lineSeparator());
-        raport.append("Total clienti: ").append(clienti.size()).append(System.lineSeparator());
+        raport.append(linie("Total clienti", clienti.size()));
         raport.append(System.lineSeparator());
 
         if (clienti.isEmpty()) {
@@ -165,33 +168,24 @@ public class RapoarteView {
         }
 
         for (Client client : clienti) {
-            raport.append("ID: ").append(client.getId()).append(System.lineSeparator());
-            raport.append("Nume: ").append(client.getNume()).append(System.lineSeparator());
-            raport.append("Telefon: ").append(client.getTelefon()).append(System.lineSeparator());
-            raport.append("Email: ").append(client.getEmail()).append(System.lineSeparator());
+            raport.append(linie("ID", client.getId()));
+            raport.append(linie("Nume", client.getNume()));
+            raport.append(linie("Telefon", client.getTelefon()));
+            raport.append(linie("Email", client.getEmail()));
             raport.append("--------------------").append(System.lineSeparator());
         }
-
         return raport.toString();
     }
 
     private String genereazaRaportAutomobile() {
         List<Automobil> automobile = service.obtineAutomobile();
+        long disponibile = automobile.stream().filter(Automobil::isDisponibil).count();
         StringBuilder raport = new StringBuilder();
-
-        int disponibile = 0;
-
-        for (Automobil automobil : automobile) {
-            if (automobil.isDisponibil()) {
-                disponibile++;
-            }
-        }
-
         raport.append("RAPORT AUTOMOBILE").append(System.lineSeparator());
         raport.append("====================").append(System.lineSeparator());
-        raport.append("Total automobile: ").append(automobile.size()).append(System.lineSeparator());
-        raport.append("Disponibile: ").append(disponibile).append(System.lineSeparator());
-        raport.append("Indisponibile: ").append(automobile.size() - disponibile).append(System.lineSeparator());
+        raport.append(linie("Total automobile", automobile.size()));
+        raport.append(linie("Disponibile", disponibile));
+        raport.append(linie("Indisponibile", automobile.size() - disponibile));
         raport.append(System.lineSeparator());
 
         if (automobile.isEmpty()) {
@@ -201,91 +195,65 @@ public class RapoarteView {
 
         for (Automobil automobil : automobile) {
             String categorie = automobil.getCategorie() == null ? "-" : automobil.getCategorie().getDenumire();
-
-            raport.append("ID: ").append(automobil.getId()).append(System.lineSeparator());
-            raport.append("Categorie: ").append(categorie).append(System.lineSeparator());
-            raport.append("Marca: ").append(automobil.getMarca()).append(System.lineSeparator());
-            raport.append("Model: ").append(automobil.getModel()).append(System.lineSeparator());
-            raport.append("Numar inmatriculare: ").append(automobil.getNumarInmatriculare()).append(System.lineSeparator());
-            raport.append("Pret pe zi: ").append(automobil.getPretPeZi()).append(" lei").append(System.lineSeparator());
-            raport.append("Status disponibilitate: ")
-                    .append(automobil.isDisponibil() ? "Disponibil" : "Indisponibil")
-                    .append(System.lineSeparator());
+            raport.append(linie("ID", automobil.getId()));
+            raport.append(linie("Categorie", categorie));
+            raport.append(linie("Marca", automobil.getMarca()));
+            raport.append(linie("Model", automobil.getModel()));
+            raport.append(linie("Numar inmatriculare", automobil.getNumarInmatriculare()));
+            raport.append(linie("Pret pe zi", automobil.getPretPeZi() + " lei"));
+            raport.append(linie("Status disponibilitate", automobil.isDisponibil() ? "Disponibil" : "Indisponibil"));
             raport.append("--------------------").append(System.lineSeparator());
         }
-
         return raport.toString();
     }
 
     private String genereazaRaportInchirieri() {
         List<Inchiriere> inchirieri = service.obtineInchirieri();
         List<Plata> plati = service.obtinePlati();
+        double totalIncasari = plati.stream().mapToDouble(Plata::getSuma).sum();
         StringBuilder raport = new StringBuilder();
-
-        double totalIncasari = 0;
-
-        for (Plata plata : plati) {
-            totalIncasari += plata.getSuma();
-        }
 
         raport.append("RAPORT INCHIRIERI SI PLATI").append(System.lineSeparator());
         raport.append("====================").append(System.lineSeparator());
-        raport.append("Total inchirieri: ").append(inchirieri.size()).append(System.lineSeparator());
-        raport.append("Total plati: ").append(plati.size()).append(System.lineSeparator());
-        raport.append("Total incasari: ").append(totalIncasari).append(" lei").append(System.lineSeparator());
+        raport.append(linie("Total inchirieri", inchirieri.size()));
+        raport.append(linie("Total plati", plati.size()));
+        raport.append(linie("Total incasari", totalIncasari + " lei"));
         raport.append(System.lineSeparator());
 
         raport.append("Statusuri inchirieri:").append(System.lineSeparator());
         for (StatusInchiriere status : StatusInchiriere.values()) {
-            int numar = 0;
-
-            for (Inchiriere inchiriere : inchirieri) {
-                if (inchiriere.getStatus() == status) {
-                    numar++;
-                }
-            }
-
+            long numar = inchirieri.stream().filter(i -> i.getStatus() == status).count();
             raport.append(status).append(": ").append(numar).append(System.lineSeparator());
         }
-
         raport.append(System.lineSeparator());
-        raport.append("Inchirieri:").append(System.lineSeparator());
 
+        raport.append("Inchirieri:").append(System.lineSeparator());
         if (inchirieri.isEmpty()) {
             raport.append("Nu exista inchirieri in baza de date.").append(System.lineSeparator());
         } else {
-            for (Inchiriere inchiriere : inchirieri) {
-                raport.append("ID: ").append(inchiriere.getId()).append(System.lineSeparator());
-                raport.append("Client: ").append(inchiriere.getClient().getNume()).append(System.lineSeparator());
-                raport.append("Automobil: ")
-                        .append(inchiriere.getAutomobil().getMarca())
-                        .append(" ")
-                        .append(inchiriere.getAutomobil().getModel())
-                        .append(System.lineSeparator());
-                raport.append("Perioada: ")
-                        .append(inchiriere.getDataInceput())
-                        .append(" - ")
-                        .append(inchiriere.getDataSfarsit())
-                        .append(System.lineSeparator());
-                raport.append("Total calculat: ").append(inchiriere.calculeazaTotal()).append(" lei").append(System.lineSeparator());
-                raport.append("Status: ").append(inchiriere.getStatus()).append(System.lineSeparator());
+            for (Inchiriere i : inchirieri) {
+                raport.append(linie("ID", i.getId()));
+                raport.append(linie("Client", i.getClient().getNume()));
+                raport.append(linie("Automobil", i.getAutomobil().getMarca() + " " + i.getAutomobil().getModel()));
+                raport.append(linie("Perioada", i.getDataInceput() + " - " + i.getDataSfarsit()));
+                raport.append(linie("Total calculat", i.calculeazaTotal() + " lei"));
+                raport.append(linie("Status", i.getStatus()));
                 raport.append("--------------------").append(System.lineSeparator());
             }
         }
 
         raport.append(System.lineSeparator());
         raport.append("Plati:").append(System.lineSeparator());
-
         if (plati.isEmpty()) {
             raport.append("Nu exista plati in baza de date.").append(System.lineSeparator());
         } else {
-            for (Plata plata : plati) {
-                raport.append("ID plata: ").append(plata.getId()).append(System.lineSeparator());
-                raport.append("ID inchiriere: ").append(plata.getInchiriere().getId()).append(System.lineSeparator());
-                raport.append("Client: ").append(plata.getInchiriere().getClient().getNume()).append(System.lineSeparator());
-                raport.append("Suma: ").append(plata.getSuma()).append(" lei").append(System.lineSeparator());
-                raport.append("Metoda: ").append(plata.getMetodaPlata()).append(System.lineSeparator());
-                raport.append("Data plata: ").append(plata.getDataPlata()).append(System.lineSeparator());
+            for (Plata p : plati) {
+                raport.append(linie("ID plata", p.getId()));
+                raport.append(linie("ID inchiriere", p.getInchiriere().getId()));
+                raport.append(linie("Client", p.getInchiriere().getClient().getNume()));
+                raport.append(linie("Suma", p.getSuma() + " lei"));
+                raport.append(linie("Metoda", p.getMetodaPlata()));
+                raport.append(linie("Data plata", p.getDataPlata()));
                 raport.append("--------------------").append(System.lineSeparator());
             }
         }

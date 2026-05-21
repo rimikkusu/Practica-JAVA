@@ -65,6 +65,15 @@
     -fx-font-weight: bold;
 }
 
+.sidebar-brand-title {
+    -fx-text-fill: #F5F5FA;
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 0 8px 0;
+    -fx-border-color: transparent transparent #E8952A transparent;
+    -fx-border-width: 0 0 2px 0;
+}
+
 .sidebar-version,
 .brand-subtitle {
     -fx-text-fill: #38386A;
@@ -2593,4 +2602,33 @@
 .table-page-background .table-view .sheet,
 .table-page-background .table-view .sheet .cell {
     -fx-background-color: transparent;
+}
+
+/* Stronger row selection for all table pages */
+.table-view .table-row-cell:filled:selected,
+.theme-light .table-view .table-row-cell:filled:selected,
+.theme-dark .table-view .table-row-cell:filled:selected,
+.theme-amber .table-view .table-row-cell:filled:selected,
+.table-page-background .table-view .table-row-cell:filled:selected {
+    -fx-background-color: linear-gradient(to right, rgba(232, 149, 42, 0.50), rgba(232, 149, 42, 0.24));
+    -fx-border-color: transparent transparent transparent #E8952A;
+    -fx-border-width: 0 0 0 4px;
+}
+
+.table-view .table-row-cell:filled:selected .table-cell,
+.table-view .table-row-cell:filled:selected .text,
+.theme-light .table-view .table-row-cell:filled:selected .table-cell,
+.theme-light .table-view .table-row-cell:filled:selected .text,
+.theme-dark .table-view .table-row-cell:filled:selected .table-cell,
+.theme-dark .table-view .table-row-cell:filled:selected .text,
+.theme-amber .table-view .table-row-cell:filled:selected .table-cell,
+.theme-amber .table-view .table-row-cell:filled:selected .text,
+.table-page-background .table-view .table-row-cell:filled:selected .table-cell,
+.table-page-background .table-view .table-row-cell:filled:selected .text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.table-page-background .table-view .table-row-cell:filled:selected:hover {
+    -fx-background-color: linear-gradient(to right, rgba(232, 149, 42, 0.62), rgba(232, 149, 42, 0.32));
 }

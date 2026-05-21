@@ -378,37 +378,22 @@ public class AutomobileView {
     }
 
     private void asiguraCategoriiImplicite() {
-        List<CategorieAuto> categorii = service.obtineCategorii();
+        List<String> existente = service.obtineCategorii().stream()
+                .map(c -> c.getDenumire().toLowerCase())
+                .toList();
 
-        String[][] categoriiDefault = {
-                {"SUV", "Automobile mari si confortabile"},
-                {"Sedan", "Automobile potrivite pentru oras si drum lung"},
-                {"Hatchback", "Automobile compacte si economice"},
-                {"Electric", "Automobile electrice"},
-                {"Luxury", "Automobile premium"}
-        };
-
-        for (String[] categorieData : categoriiDefault) {
-            String denumire = categorieData[0];
-            String descriere = categorieData[1];
-
-            boolean exista = false;
-
-            for (CategorieAuto categorie : categorii) {
-                if (categorie.getDenumire().equalsIgnoreCase(denumire)) {
-                    exista = true;
-                    break;
-                }
+        java.util.Map.of(
+                "SUV", "Automobile mari si confortabile",
+                "Sedan", "Automobile potrivite pentru oras si drum lung",
+                "Hatchback", "Automobile compacte si economice",
+                "Electric", "Automobile electrice",
+                "Luxury", "Automobile premium"
+        ).forEach((denumire, descriere) -> {
+            if (!existente.contains(denumire.toLowerCase())) {
+                try { service.adaugaCategorie(new CategorieAuto(0, denumire, descriere)); }
+                catch (Exception ignored) {}
             }
-
-            if (!exista) {
-                try {
-                    service.adaugaCategorie(new CategorieAuto(0, denumire, descriere));
-                } catch (Exception e) {
-                    // ignoram daca exista deja
-                }
-            }
-        }
+        });
     }
 
     private Stage owner() {

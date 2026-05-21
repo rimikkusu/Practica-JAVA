@@ -853,27 +853,19 @@ public class DashboardView {
     }
 
     private String statusClassForInchiriere(StatusInchiriere status) {
-        if (status == StatusInchiriere.ACTIVA) {
-            return "status-success";
-        }
-
-        if (status == StatusInchiriere.ANULATA) {
-            return "status-danger";
-        }
-
-        return "status-neutral";
+        return switch (status) {
+            case ACTIVA -> "status-success";
+            case ANULATA -> "status-danger";
+            default -> "status-neutral";
+        };
     }
 
     private String badgeClassForInchiriere(StatusInchiriere status) {
-        if (status == StatusInchiriere.ACTIVA) {
-            return "badge-activa";
-        }
-
-        if (status == StatusInchiriere.ANULATA) {
-            return "badge-anulata";
-        }
-
-        return "badge-finalizata";
+        return switch (status) {
+            case ACTIVA -> "badge-activa";
+            case ANULATA -> "badge-anulata";
+            default -> "badge-finalizata";
+        };
     }
 
     private static class DashboardData {

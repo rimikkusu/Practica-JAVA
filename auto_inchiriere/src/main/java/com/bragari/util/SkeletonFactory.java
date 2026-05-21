@@ -1,5 +1,7 @@
 package com.bragari.util;
 
+import java.util.stream.IntStream;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -20,13 +22,10 @@ public class SkeletonFactory {
         skeleton.getStyleClass().add("skeleton-table");
         skeleton.setPadding(new Insets(4, 0, 4, 0));
         skeleton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-
         skeleton.getChildren().add(createSkeletonRow(columns, 18, "skeleton-header-box"));
-
-        for (int i = 0; i < rows; i++) {
-            skeleton.getChildren().add(createSkeletonRow(columns, 28, "skeleton-box"));
-        }
-
+        IntStream.range(0, rows)
+                .mapToObj(i -> createSkeletonRow(columns, 28, "skeleton-box"))
+                .forEach(skeleton.getChildren()::add);
         return skeleton;
     }
 
@@ -55,34 +54,25 @@ public class SkeletonFactory {
         pane.setHgap(12);
         pane.setVgap(12);
 
-        for (int i = 0; i < count; i++) {
-            VBox card = new VBox(10);
+        IntStream.range(0, count).forEach(i -> {
+            Region icon = createSkeletonRegion(42, 28);
+            Region title = createSkeletonRegion(100, 12);
+            Region value = createSkeletonRegion(88, 24);
+            Region caption = createSkeletonRegion(120, 10);
+
+            VBox card = new VBox(10, icon, title, value, caption);
             card.getStyleClass().add("skeleton-card");
-
-            Region icon = new Region();
-            icon.getStyleClass().add("skeleton-box");
-            icon.setPrefSize(42, 28);
-
-            Region title = new Region();
-            title.getStyleClass().add("skeleton-box");
-            title.setPrefHeight(12);
-            title.setPrefWidth(100);
-
-            Region value = new Region();
-            value.getStyleClass().add("skeleton-box");
-            value.setPrefHeight(24);
-            value.setPrefWidth(88);
-
-            Region caption = new Region();
-            caption.getStyleClass().add("skeleton-box");
-            caption.setPrefHeight(10);
-            caption.setPrefWidth(120);
-
-            card.getChildren().addAll(icon, title, value, caption);
             pane.getChildren().add(card);
-        }
+        });
 
         return pane;
+    }
+
+    private static Region createSkeletonRegion(double width, double height) {
+        Region r = new Region();
+        r.getStyleClass().add("skeleton-box");
+        r.setPrefSize(width, height);
+        return r;
     }
 
     public static VBox createSimpleLoading(String message) {

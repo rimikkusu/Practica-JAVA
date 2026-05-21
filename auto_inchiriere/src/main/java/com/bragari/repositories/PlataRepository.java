@@ -141,13 +141,7 @@ public class PlataRepository implements CrudRepository<Plata> {
 
     @Override
     public Plata cautaDupaId(int id) {
-        for (Plata plata : obtineToate()) {
-            if (plata.getId() == id) {
-                return plata;
-            }
-        }
-
-        return null;
+        return obtineToate().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
     }
 
     @Override

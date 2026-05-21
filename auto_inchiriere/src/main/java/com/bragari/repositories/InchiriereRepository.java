@@ -127,13 +127,7 @@ public class InchiriereRepository implements CrudRepository<Inchiriere> {
 
     @Override
     public Inchiriere cautaDupaId(int id) {
-        for (Inchiriere inchiriere : obtineToate()) {
-            if (inchiriere.getId() == id) {
-                return inchiriere;
-            }
-        }
-
-        return null;
+        return obtineToate().stream().filter(i -> i.getId() == id).findFirst().orElse(null);
     }
 
     @Override

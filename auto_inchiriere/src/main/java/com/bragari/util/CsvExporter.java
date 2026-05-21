@@ -1,7 +1,5 @@
 package com.bragari.util;
 
-import com.bragari.models.Automobil;
-import com.bragari.models.Client;
 import com.bragari.models.Inchiriere;
 import com.bragari.models.Plata;
 import com.bragari.services.AutoInchiriereService;
@@ -30,95 +28,43 @@ public class CsvExporter {
     public static String genereazaCsvClienti(AutoInchiriereService service) {
         StringBuilder csv = new StringBuilder();
         csv.append(csvLine("id", "nume", "telefon", "email"));
-
-        for (Client client : service.obtineClienti()) {
-            csv.append(csvLine(
-                    client.getId(),
-                    client.getNume(),
-                    client.getTelefon(),
-                    client.getEmail()
-            ));
-        }
-
+        service.obtineClienti().forEach(c ->
+                csv.append(csvLine(c.getId(), c.getNume(), c.getTelefon(), c.getEmail())));
         return csv.toString();
     }
 
     public static String genereazaCsvAutomobile(AutoInchiriereService service) {
         StringBuilder csv = new StringBuilder();
         csv.append(csvLine("id", "categorie", "marca", "model", "numar_inmatriculare", "pret_pe_zi", "disponibil"));
-
-        for (Automobil automobil : service.obtineAutomobile()) {
-            String categorie = automobil.getCategorie() == null ? "" : automobil.getCategorie().getDenumire();
-
-            csv.append(csvLine(
-                    automobil.getId(),
-                    categorie,
-                    automobil.getMarca(),
-                    automobil.getModel(),
-                    automobil.getNumarInmatriculare(),
-                    automobil.getPretPeZi(),
-                    automobil.isDisponibil() ? "DA" : "NU"
-            ));
-        }
-
+        service.obtineAutomobile().forEach(a ->
+                csv.append(csvLine(a.getId(),
+                        a.getCategorie() == null ? "" : a.getCategorie().getDenumire(),
+                        a.getMarca(), a.getModel(), a.getNumarInmatriculare(),
+                        a.getPretPeZi(), a.isDisponibil() ? "DA" : "NU")));
         return csv.toString();
     }
 
     public static String genereazaCsvInchirieri(AutoInchiriereService service) {
         StringBuilder csv = new StringBuilder();
-        csv.append(csvLine(
-                "tip",
-                "id",
-                "inchiriere_id",
-                "client",
-                "automobil",
-                "data_inceput",
-                "data_sfarsit",
-                "total",
-                "status",
-                "suma",
-                "metoda_plata",
-                "data_plata"
-        ));
+        csv.append(csvLine("tip", "id", "inchiriere_id", "client", "automobil",
+                "data_inceput", "data_sfarsit", "total", "status", "suma", "metoda_plata", "data_plata"));
 
-        for (Inchiriere inchiriere : service.obtineInchirieri()) {
-            String automobil = inchiriere.getAutomobil().getMarca() + " " + inchiriere.getAutomobil().getModel();
+        service.obtineInchirieri().forEach(i ->
+                csv.append(csvLine("INCHIRIERE", i.getId(), "",
+                        i.getClient().getNume(),
+                        i.getAutomobil().getMarca() + " " + i.getAutomobil().getModel(),
+                        i.getDataInceput(), i.getDataSfarsit(),
+                        i.calculeazaTotal(), i.getStatus(), "", "", "")));
 
-            csv.append(csvLine(
-                    "INCHIRIERE",
-                    inchiriere.getId(),
-                    "",
-                    inchiriere.getClient().getNume(),
-                    automobil,
-                    inchiriere.getDataInceput(),
-                    inchiriere.getDataSfarsit(),
-                    inchiriere.calculeazaTotal(),
-                    inchiriere.getStatus(),
-                    "",
-                    "",
-                    ""
-            ));
-        }
-
-        for (Plata plata : service.obtinePlati()) {
-            Inchiriere inchiriere = plata.getInchiriere();
-            String automobil = inchiriere.getAutomobil().getMarca() + " " + inchiriere.getAutomobil().getModel();
-
-            csv.append(csvLine(
-                    "PLATA",
-                    plata.getId(),
-                    inchiriere.getId(),
-                    inchiriere.getClient().getNume(),
-                    automobil,
-                    inchiriere.getDataInceput(),
-                    inchiriere.getDataSfarsit(),
-                    inchiriere.calculeazaTotal(),
-                    inchiriere.getStatus(),
-                    plata.getSuma(),
-                    plata.getMetodaPlata(),
-                    plata.getDataPlata()
-            ));
-        }
+        service.obtinePlati().forEach(p -> {
+            Inchiriere i = p.getInchiriere();
+            csv.append(csvLine("PLATA", p.getId(), i.getId(),
+                    i.getClient().getNume(),
+                    i.getAutomobil().getMarca() + " " + i.getAutomobil().getModel(),
+                    i.getDataInceput(), i.getDataSfarsit(),
+                    i.calculeazaTotal(), i.getStatus(),
+                    p.getSuma(), p.getMetodaPlata(), p.getDataPlata()));
+        });
 
         return csv.toString();
     }

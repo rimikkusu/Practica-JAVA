@@ -1,163 +1,58 @@
 package com.bragari.repositories;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 
-import com.bragari.database.DatabaseManager;
+import com.bragari.database.SqlHelper;
 import com.bragari.models.Utilizator;
 
 public class UtilizatorRepository {
 
+    private static final String SELECT = "SELECT id, username, password_hash, rol FROM utilizatori";
+
+    private Utilizator map(ResultSet rs) throws SQLException {
+        return new Utilizator(rs.getInt("id"), rs.getString("username"),
+                rs.getString("password_hash"), rs.getString("rol"));
+    }
+
     public void adauga(Utilizator utilizator) {
-        String sql = "INSERT INTO utilizatori (username, password_hash, rol) VALUES (?, ?, ?) RETURNING id";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, utilizator.getUsername());
-            statement.setString(2, utilizator.getPasswordHash());
-            statement.setString(3, utilizator.getRol());
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    utilizator.setId(resultSet.getInt("id"));
-                }
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Eroare la adaugarea utilizatorului: " + e.getMessage());
-        }
+        int id = SqlHelper.insertReturningId(
+                "INSERT INTO utilizatori (username, password_hash, rol) VALUES (?, ?, ?) RETURNING id",
+                ps -> { ps.setString(1, utilizator.getUsername()); ps.setString(2, utilizator.getPasswordHash());
+                        ps.setString(3, utilizator.getRol()); }
+        );
+        utilizator.setId(id);
     }
 
     public List<Utilizator> obtineToti() {
-        List<Utilizator> utilizatori = new ArrayList<>();
-        String sql = "SELECT id, username, password_hash, rol FROM utilizatori ORDER BY id";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                utilizatori.add(creeazaUtilizatorDinResultSet(resultSet));
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Eroare la citirea utilizatorilor: " + e.getMessage());
-        }
-
-        return utilizatori;
+        return SqlHelper.queryList(SELECT + " ORDER BY id", null, this::map);
     }
 
     public Utilizator cautaDupaUsername(String username) {
-        String sql = "SELECT id, username, password_hash, rol FROM utilizatori WHERE username = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, username);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return creeazaUtilizatorDinResultSet(resultSet);
-                }
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Eroare la cautarea utilizatorului: " + e.getMessage());
-        }
-
-        return null;
+        return SqlHelper.queryOne(SELECT + " WHERE username = ?", ps -> ps.setString(1, username), this::map).orElse(null);
     }
 
     public Utilizator cautaDupaId(int id) {
-        String sql = "SELECT id, username, password_hash, rol FROM utilizatori WHERE id = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1, id);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return creeazaUtilizatorDinResultSet(resultSet);
-                }
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Eroare la cautarea utilizatorului: " + e.getMessage());
-        }
-
-        return null;
+        return SqlHelper.queryOne(SELECT + " WHERE id = ?", ps -> ps.setInt(1, id), this::map).orElse(null);
     }
 
     public void actualizeaza(Utilizator utilizator) {
-        String sql = "UPDATE utilizatori SET username = ?, password_hash = ?, rol = ? WHERE id = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, utilizator.getUsername());
-            statement.setString(2, utilizator.getPasswordHash());
-            statement.setString(3, utilizator.getRol());
-            statement.setInt(4, utilizator.getId());
-
-            int rows = statement.executeUpdate();
-
-            if (rows == 0) {
-                throw new RuntimeException("Utilizatorul nu exista.");
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Eroare la actualizarea utilizatorului: " + e.getMessage());
-        }
+        int rows = SqlHelper.update(
+                "UPDATE utilizatori SET username=?, password_hash=?, rol=? WHERE id=?",
+                ps -> { ps.setString(1, utilizator.getUsername()); ps.setString(2, utilizator.getPasswordHash());
+                        ps.setString(3, utilizator.getRol()); ps.setInt(4, utilizator.getId()); }
+        );
+        if (rows == 0) throw new RuntimeException("Eroare la actualizarea utilizatorului: Utilizatorul nu exista.");
     }
 
     public void sterge(int id) {
-        String sql = "DELETE FROM utilizatori WHERE id = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1, id);
-
-            int rows = statement.executeUpdate();
-
-            if (rows == 0) {
-                throw new RuntimeException("Utilizatorul nu exista.");
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Eroare la stergerea utilizatorului: " + e.getMessage());
-        }
+        int rows = SqlHelper.update("DELETE FROM utilizatori WHERE id = ?", ps -> ps.setInt(1, id));
+        if (rows == 0) throw new RuntimeException("Eroare la stergerea utilizatorului: Utilizatorul nu exista.");
     }
 
     public boolean existaUtilizatori() {
-        String sql = "SELECT EXISTS (SELECT 1 FROM utilizatori)";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            if (resultSet.next()) {
-                return resultSet.getBoolean(1);
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Eroare la verificarea utilizatorilor: " + e.getMessage());
-        }
-
-        return false;
-    }
-
-    private Utilizator creeazaUtilizatorDinResultSet(ResultSet resultSet) throws Exception {
-        return new Utilizator(
-                resultSet.getInt("id"),
-                resultSet.getString("username"),
-                resultSet.getString("password_hash"),
-                resultSet.getString("rol")
-        );
+        return SqlHelper.queryOne("SELECT EXISTS (SELECT 1 FROM utilizatori)",
+                null, rs -> rs.getBoolean(1)).orElse(false);
     }
 }
