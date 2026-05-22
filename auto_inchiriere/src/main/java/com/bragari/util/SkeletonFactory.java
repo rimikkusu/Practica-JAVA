@@ -1,5 +1,8 @@
 package com.bragari.util;
 
+// SkeletonFactory creeaza elemente de incarcare, adica forme simple afisate
+// pana cand vin datele reale din baza de date.
+
 import java.util.stream.IntStream;
 
 import javafx.geometry.Insets;

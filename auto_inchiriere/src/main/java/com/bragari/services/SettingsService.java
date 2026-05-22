@@ -1,5 +1,8 @@
 package com.bragari.services;
 
+// SettingsService tine setarile vizuale ale aplicatiei, cum ar fi tema,
+// marimea textului si pagina care se deschide prima.
+
 import java.util.prefs.Preferences;
 
 public class SettingsService {

@@ -1,5 +1,8 @@
 package com.bragari.util;
 
+// DialogHelper strange metodele folosite la dialoguri si la incarcarea CSS-ului.
+// Asa nu repetam acelasi cod in fiecare pagina a aplicatiei.
+
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -17,19 +20,58 @@ import javafx.stage.Stage;
 
 public class DialogHelper {
 
+    // Toate fisierele CSS separate sunt tinute in acelasi folder de resurse.
+    // Constanta evita repetarea caii complete la fiecare fisier din lista.
+    private static final String STYLES_PATH = "/com/bragari/styles/";
+
+    // Ordinea este importanta: JavaFX aplica regulile CSS in ordinea in care
+    // sunt incarcate. Fisierele de la final pot suprascrie reguli din fisierele
+    // anterioare, exact cum se intampla in vechiul application.css monolitic.
+    private static final String[] APP_STYLESHEETS = {
+            "/styles.css",
+            STYLES_PATH + "application.css",
+            STYLES_PATH + "01-base-layout.css",
+            STYLES_PATH + "02-sidebar.css",
+            STYLES_PATH + "03-top-bar.css",
+            STYLES_PATH + "04-buttons.css",
+            STYLES_PATH + "05-cards-stats.css",
+            STYLES_PATH + "06-tables.css",
+            STYLES_PATH + "07-badges.css",
+            STYLES_PATH + "08-forms-dialogs.css",
+            STYLES_PATH + "09-login.css",
+            STYLES_PATH + "10-reports-loading.css",
+            STYLES_PATH + "11-themes.css",
+            STYLES_PATH + "12-dashboard-widgets.css",
+            STYLES_PATH + "13-app-dialogs.css",
+            STYLES_PATH + "14-command-dashboard.css",
+            STYLES_PATH + "15-login-overrides.css",
+            STYLES_PATH + "16-table-pages.css"
+    };
+
     private DialogHelper() {
     }
 
+    // Se foloseste pentru ferestrele principale, unde stilurile se pun pe Scene.
     public static void aplicaCss(Scene scene) {
-        adaugaCss(scene.getStylesheets(), "/styles.css");
-        adaugaCss(scene.getStylesheets(), "/com/bragari/styles/application.css");
+        aplicaCss(scene.getStylesheets());
     }
 
+    // Se foloseste pentru componente sau dialoguri, unde stilurile se pun direct
+    // pe radacina vizuala a ferestrei.
     public static void aplicaCss(Parent parent) {
-        adaugaCss(parent.getStylesheets(), "/styles.css");
-        adaugaCss(parent.getStylesheets(), "/com/bragari/styles/application.css");
+        aplicaCss(parent.getStylesheets());
     }
 
+    // Parcurge lista centralizata si incarca toate fisierele CSS ale aplicatiei.
+    // Astfel, daca mai adaugam un fisier CSS, il inregistram intr-un singur loc.
+    private static void aplicaCss(ObservableList<String> stylesheets) {
+        for (String path : APP_STYLESHEETS) {
+            adaugaCss(stylesheets, path);
+        }
+    }
+
+    // Cauta fisierul CSS in resursele aplicatiei si il adauga doar daca exista.
+    // Verificarea contains previne dublarea aceluiasi stylesheet pe aceeasi scena.
     private static void adaugaCss(ObservableList<String> stylesheets, String path) {
         URL resource = DialogHelper.class.getResource(path);
 

@@ -1,5 +1,8 @@
 package com.bragari.repositories;
 
+// Repository-ul pentru utilizatori lucreaza cu tabela de conturi.
+// Aici se cauta utilizatorii dupa username si se salveaza parolele criptate.
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;

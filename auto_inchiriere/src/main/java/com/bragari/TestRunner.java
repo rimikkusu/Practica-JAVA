@@ -1,5 +1,8 @@
 package com.bragari;
 
+// TestRunner este o clasa simpla pentru verificari rapide in consola.
+// O folosim cand vrem sa testam logica fara sa pornim toata interfata JavaFX.
+
 import java.time.LocalDate;
 import java.util.List;
 

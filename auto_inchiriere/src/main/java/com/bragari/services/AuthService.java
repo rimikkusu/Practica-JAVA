@@ -1,5 +1,8 @@
 package com.bragari.services;
 
+// AuthService se ocupa de autentificare si administrarea utilizatorilor.
+// El verifica parola si trimite mai departe datele catre repository.
+
 import java.util.List;
 
 import com.bragari.models.Utilizator;

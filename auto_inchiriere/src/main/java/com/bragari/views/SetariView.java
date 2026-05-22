@@ -1,5 +1,8 @@
 package com.bragari.views;
 
+// SetariView este pagina unde se schimba tema, marimea textului si alte optiuni.
+// Dupa salvare, aplicatia aplica setarile pe interfata.
+
 import java.util.function.Supplier;
 
 import com.bragari.services.SettingsService;

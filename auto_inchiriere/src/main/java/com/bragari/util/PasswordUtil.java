@@ -1,5 +1,8 @@
 package com.bragari.util;
 
+// PasswordUtil se ocupa de parole: le transforma in hash si apoi le verifica.
+// Nu pastram parola simpla, pentru ca nu ar fi sigur.
+
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;

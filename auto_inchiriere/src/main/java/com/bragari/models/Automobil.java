@@ -1,5 +1,8 @@
 package com.bragari.models;
 
+// Modelul acesta tine datele pentru un automobil din firma de inchirieri.
+// Obiectele de tip Automobil ajung apoi in tabele, formulare si baza de date.
+
 public class Automobil extends BaseEntity {
     private CategorieAuto categorie;
     private String marca;

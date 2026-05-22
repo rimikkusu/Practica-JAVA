@@ -1,5 +1,8 @@
 package com.bragari.repositories;
 
+// Repository-ul pentru clienti contine codul care lucreaza direct cu tabela clienti.
+// Service-ul il foloseste ca sa nu scrie SQL in partea de interfata.
+
 import java.util.List;
 
 import com.bragari.database.SqlHelper;

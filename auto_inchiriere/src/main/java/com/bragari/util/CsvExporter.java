@@ -1,5 +1,8 @@
 package com.bragari.util;
 
+// CsvExporter transforma datele din aplicatie intr-un fisier CSV.
+// CSV-ul poate fi deschis mai usor in Excel sau in alte programe de tabel.
+
 import com.bragari.models.Inchiriere;
 import com.bragari.models.Plata;
 import com.bragari.services.AutoInchiriereService;

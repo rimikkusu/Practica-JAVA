@@ -1,5 +1,8 @@
 package com.bragari.database;
 
+// Aici sunt metode mici care ne ajuta cand lucram cu SQL si ResultSet.
+// Le folosim ca sa nu repetam aceleasi verificari prin repository-uri.
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

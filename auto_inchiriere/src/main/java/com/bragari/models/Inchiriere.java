@@ -1,5 +1,8 @@
 package com.bragari.models;
 
+// Modelul Inchiriere leaga un client de un automobil pe o perioada de timp.
+// Aici se tine si statusul, ca sa stim daca inchirierea e activa sau finalizata.
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 

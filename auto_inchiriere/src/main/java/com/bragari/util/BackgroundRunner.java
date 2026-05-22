@@ -1,5 +1,8 @@
 package com.bragari.util;
 
+// Interfata asta descrie cum pornim o actiune in background.
+// Este folosita ca paginile sa nu blocheze interfata cand se incarca date.
+
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 

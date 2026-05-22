@@ -1,5 +1,8 @@
 package com.bragari.views;
 
+// PlatiView construieste pagina pentru platile facute la inchirieri.
+// De aici putem adauga, modifica sau sterge o plata.
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.Callable;

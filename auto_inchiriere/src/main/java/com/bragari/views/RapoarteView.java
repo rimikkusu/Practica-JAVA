@@ -1,5 +1,8 @@
 package com.bragari.views;
 
+// RapoarteView afiseaza rapoarte si permite exportul datelor.
+// Practic, transforma datele din aplicatie in informatii mai usor de citit.
+
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

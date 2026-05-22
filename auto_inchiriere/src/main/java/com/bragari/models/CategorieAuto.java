@@ -1,5 +1,8 @@
 package com.bragari.models;
 
+// Model simplu pentru categoria unei masini, de exemplu SUV sau Sedan.
+// Il folosim ca automobilele sa aiba o categorie clara.
+
 public class CategorieAuto extends BaseEntity {
     private String denumire;
     private String descriere;

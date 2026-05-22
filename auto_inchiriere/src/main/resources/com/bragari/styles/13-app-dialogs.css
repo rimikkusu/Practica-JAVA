@@ -1,0 +1,185 @@
+/* Custom success, error, and confirmation dialogs */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Stilurile de aici sunt pentru dialogurile construite in DialogHelper:
+   succes, eroare si confirmare. Clasele de tema de la final adapteaza aceleasi
+   dialoguri pentru dark mode si amber mode. */
+
+/* Custom success / error / confirmation dialogs */
+.app-dialog {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #EAE7E0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 14px;
+    -fx-background-radius: 14px;
+    -fx-effect: dropshadow(three-pass-box, rgba(24, 24, 30, 0.14), 28, 0, 0, 10);
+}
+
+.dialog-header {
+    -fx-alignment: center-left;
+}
+
+.dialog-icon {
+    -fx-alignment: center;
+    -fx-min-width: 42px;
+    -fx-pref-width: 42px;
+    -fx-min-height: 42px;
+    -fx-pref-height: 42px;
+    -fx-background-radius: 21px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.dialog-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #18181E;
+}
+
+.dialog-message {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6B6B80;
+    -fx-line-spacing: 2px;
+}
+
+.dialog-actions {
+    -fx-padding: 4px 0 0 0;
+}
+
+.dialog-success-icon {
+    -fx-background-color: #E1F5EE;
+    -fx-text-fill: #085041;
+}
+
+.dialog-error-icon {
+    -fx-background-color: #FAECE7;
+    -fx-text-fill: #8B3018;
+}
+
+.dialog-confirm-icon {
+    -fx-background-color: #FFF3E4;
+    -fx-text-fill: #7A4B00;
+}
+
+.dialog-primary-button,
+.dialog-danger-button,
+.dialog-secondary-button {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.dialog-primary-button {
+    -fx-background-color: #E8952A;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+}
+
+.dialog-primary-button:hover {
+    -fx-background-color: #D4831A;
+}
+
+.dialog-secondary-button {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D4CFC6;
+    -fx-border-width: 1px;
+    -fx-text-fill: #5A5A70;
+}
+
+.dialog-secondary-button:hover {
+    -fx-background-color: #F5F2EC;
+    -fx-text-fill: #18181E;
+}
+
+.dialog-danger-button {
+    -fx-background-color: #D94040;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+}
+
+.dialog-danger-button:hover {
+    -fx-background-color: #C73232;
+}
+
+.theme-dark.app-dialog,
+.theme-dark .app-dialog {
+    -fx-background-color: #1F2937;
+    -fx-border-color: #374151;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.36), 32, 0, 0, 12);
+}
+
+.theme-dark .dialog-title {
+    -fx-text-fill: #F9FAFB;
+}
+
+.theme-dark .dialog-message {
+    -fx-text-fill: #D1D5DB;
+}
+
+.theme-dark .dialog-secondary-button {
+    -fx-background-color: #111827;
+    -fx-border-color: #4B5563;
+    -fx-text-fill: #F9FAFB;
+}
+
+.theme-dark .dialog-secondary-button:hover {
+    -fx-background-color: #273449;
+}
+
+.theme-dark .dialog-success-icon {
+    -fx-background-color: #123A2F;
+    -fx-text-fill: #74F2C0;
+}
+
+.theme-dark .dialog-error-icon {
+    -fx-background-color: #44201D;
+    -fx-text-fill: #FFB4A8;
+}
+
+.theme-dark .dialog-confirm-icon {
+    -fx-background-color: #2A1D0D;
+    -fx-text-fill: #F2C078;
+}
+
+.theme-amber.app-dialog,
+.theme-amber .app-dialog {
+    -fx-background-color: #11111A;
+    -fx-border-color: #2A2A36;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.45), 34, 0, 0, 12);
+}
+
+.theme-amber .dialog-title {
+    -fx-text-fill: #F5F5FA;
+}
+
+.theme-amber .dialog-message {
+    -fx-text-fill: #C7C7D8;
+}
+
+.theme-amber .dialog-secondary-button {
+    -fx-background-color: #181820;
+    -fx-border-color: #2A2A36;
+    -fx-text-fill: #F5F5FA;
+}
+
+.theme-amber .dialog-secondary-button:hover {
+    -fx-background-color: #1F1F2A;
+}
+
+.theme-amber .dialog-success-icon {
+    -fx-background-color: #123A2F;
+    -fx-text-fill: #74F2C0;
+}
+
+.theme-amber .dialog-error-icon {
+    -fx-background-color: #44201D;
+    -fx-text-fill: #FFB4A8;
+}
+
+.theme-amber .dialog-confirm-icon {
+    -fx-background-color: #2A1D0D;
+    -fx-text-fill: #F2C078;
+}
+

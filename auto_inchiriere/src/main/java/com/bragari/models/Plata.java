@@ -1,5 +1,8 @@
 package com.bragari.models;
 
+// Modelul Plata reprezinta banii platiti pentru o inchiriere.
+// Asa putem calcula rapoarte si putem vedea ce plati exista in aplicatie.
+
 import java.time.LocalDate;
 
 public class Plata extends BaseEntity {

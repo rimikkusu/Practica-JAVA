@@ -1,5 +1,8 @@
 package com.bragari.models;
 
+// Modelul Client pastreaza informatiile despre persoana care inchiriaza masina.
+// Datele de aici sunt afisate in pagina de clienti si folosite la inchirieri.
+
 public class Client extends BaseEntity {
     private String nume;
     private String telefon;

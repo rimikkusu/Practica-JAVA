@@ -1,5 +1,8 @@
 package com.bragari.repositories;
 
+// Repository-ul pentru plati se ocupa de salvarea si citirea platilor.
+// Este folosit cand vrem sa vedem incasarile sau platile unei inchirieri.
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;

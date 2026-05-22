@@ -1,5 +1,8 @@
 package com.bragari.views;
 
+// UtilizatoriView este pagina pentru administrarea conturilor.
+// In mod normal, ea este folosita de admin ca sa creeze sau sa modifice utilizatori.
+
 import java.util.function.Supplier;
 
 import com.bragari.models.Utilizator;

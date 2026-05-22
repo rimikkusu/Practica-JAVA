@@ -1,5 +1,8 @@
 package com.bragari.models;
 
+// Modelul Utilizator tine datele pentru conturile din aplicatie.
+// Rolul din acest model decide ce optiuni poate vedea utilizatorul.
+
 public class Utilizator extends BaseEntity {
     private String username;
     private String passwordHash;

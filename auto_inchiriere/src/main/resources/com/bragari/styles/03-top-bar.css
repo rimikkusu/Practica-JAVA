@@ -1,0 +1,38 @@
+/* Top bar and page titles */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Defineste bara de sus si textele de titlu/subtitlu pentru fiecare pagina.
+   Este separat de sidebar ca layout-ul superior sa poata fi explicat independent
+   de meniul lateral. */
+
+/* Top bar */
+.top-bar {
+    -fx-background-color: white;
+    -fx-border-color: #EAE7E0;
+    -fx-border-width: 0 0 0.5 0;
+    -fx-padding: 11px 18px;
+    -fx-pref-height: 44px;
+    -fx-min-height: 44px;
+}
+
+.top-bar-actions {
+    -fx-spacing: 7px;
+}
+
+.page-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #18181E;
+}
+
+.page-title-icon {
+    -fx-text-fill: #E8952A;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.page-subtitle,
+.muted-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6B6B80;
+}
+

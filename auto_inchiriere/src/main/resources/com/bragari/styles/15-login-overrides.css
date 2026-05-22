@@ -1,0 +1,54 @@
+/* Final login glass overrides */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Acest fisier se incarca dupa teme ca sa pastreze efectul de sticla al cardului
+   de login. Daca ar fi incarcat mai devreme, tema dark/light ar putea suprascrie
+   transparenta si culorile campurilor de autentificare. */
+
+/* Final login glass override: keep the login form transparent in every theme */
+.login-root .login-card,
+.login-page .login-card,
+.theme-light .login-root .login-card,
+.theme-dark .login-root .login-card,
+.theme-amber .login-root .login-card,
+.theme-light .login-page .login-card,
+.theme-dark .login-page .login-card,
+.theme-amber .login-page .login-card {
+    -fx-background-color: linear-gradient(to bottom right, rgba(10, 14, 24, 0.46), rgba(9, 9, 15, 0.24));
+    -fx-border-color: rgba(232, 149, 42, 0.38);
+    -fx-border-width: 1px;
+    -fx-background-radius: 26px;
+    -fx-border-radius: 26px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.34), 34, 0, 0, 16);
+}
+
+.login-root .login-overlay,
+.login-page .login-overlay,
+.theme-light .login-root .login-overlay,
+.theme-dark .login-root .login-overlay,
+.theme-amber .login-root .login-overlay,
+.theme-light .login-page .login-overlay,
+.theme-dark .login-page .login-overlay,
+.theme-amber .login-page .login-overlay {
+    -fx-background-color: linear-gradient(to right, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.20));
+}
+
+.login-root .login-card .login-input,
+.login-page .login-card .login-input,
+.theme-light .login-card .login-input,
+.theme-dark .login-card .login-input,
+.theme-amber .login-card .login-input {
+    -fx-background-color: rgba(255, 255, 255, 0.16);
+    -fx-border-color: rgba(255, 255, 255, 0.34);
+    -fx-text-fill: #F5F5FA;
+    -fx-prompt-text-fill: #D8D8E8;
+}
+
+.login-root .login-card .login-input:focused,
+.login-page .login-card .login-input:focused,
+.theme-light .login-card .login-input:focused,
+.theme-dark .login-card .login-input:focused,
+.theme-amber .login-card .login-input:focused {
+    -fx-background-color: rgba(232, 149, 42, 0.14);
+    -fx-border-color: #E8952A;
+}
+

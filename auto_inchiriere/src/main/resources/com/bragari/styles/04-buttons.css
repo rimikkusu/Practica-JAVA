@@ -1,0 +1,95 @@
+/* Buttons and toolbars */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Grupeaza toate butoanele reutilizabile: primare, secundare, periculoase si
+   butoane cu icon. Pseudo-clasele :hover si :pressed descriu reactia vizuala
+   la interactiunea utilizatorului. */
+
+/* Buttons */
+.button,
+.btn-primary,
+.primary-button {
+    -fx-background-color: #E8952A;
+    -fx-text-fill: white;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-padding: 6px 13px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.button:hover,
+.btn-primary:hover,
+.primary-button:hover {
+    -fx-background-color: #D4831A;
+}
+
+.button:pressed,
+.btn-primary:pressed,
+.primary-button:pressed {
+    -fx-background-color: #C07010;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+.btn-secondary,
+.secondary-button {
+    -fx-background-color: white;
+    -fx-text-fill: #5A5A70;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: normal;
+    -fx-background-radius: 5px;
+    -fx-border-color: #D4CFC6;
+    -fx-border-radius: 5px;
+    -fx-border-width: 0.5px;
+    -fx-padding: 5px 11px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover,
+.secondary-button:hover {
+    -fx-background-color: #F5F2EC;
+    -fx-text-fill: #18181E;
+}
+
+.btn-danger,
+.danger-button {
+    -fx-background-color: white;
+    -fx-text-fill: #D94040;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: normal;
+    -fx-background-radius: 5px;
+    -fx-border-color: #F0CAC8;
+    -fx-border-radius: 5px;
+    -fx-border-width: 0.5px;
+    -fx-padding: 5px 11px;
+    -fx-cursor: hand;
+}
+
+.btn-danger:hover,
+.danger-button:hover {
+    -fx-background-color: #FAECE7;
+}
+
+.btn-icon {
+    -fx-background-color: white;
+    -fx-border-color: #D4CFC6;
+    -fx-border-radius: 5px;
+    -fx-border-width: 0.5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 4px 8px;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+}
+
+.page-toolbar,
+.dialog-actions {
+    -fx-alignment: center-left;
+    -fx-spacing: 10px;
+}
+
+.dialog-actions {
+    -fx-alignment: center-right;
+}
+

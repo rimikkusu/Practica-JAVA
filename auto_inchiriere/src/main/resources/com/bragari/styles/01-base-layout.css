@@ -1,0 +1,32 @@
+/* Base root and main layout */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Stabileste fundalul general, fontul implicit si containerele principale.
+   Aceste reguli sunt incarcate primele deoarece restul interfetei se construieste
+   peste aceste valori de baza. */
+
+/* AutoFleet UI - Amber Noir Design System */
+
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -fx-background-color: #F7F5F0;
+}
+
+.app-shell,
+.app-root-stack {
+    -fx-background-color: #F7F5F0;
+}
+
+/* Main layout */
+.page-container {
+    -fx-background-color: #F7F5F0;
+    -fx-padding: 0;
+    -fx-spacing: 0;
+}
+
+.page-content {
+    -fx-background-color: #F7F5F0;
+    -fx-padding: 16px 18px;
+    -fx-spacing: 16px;
+}
+

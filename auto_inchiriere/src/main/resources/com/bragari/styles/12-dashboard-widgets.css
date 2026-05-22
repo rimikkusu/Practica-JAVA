@@ -1,0 +1,136 @@
+/* Dashboard chips and avatars */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Completeaza widgeturile de dashboard cu dimensiuni fixe pentru chip-uri si
+   avataruri. Dimensiunile fixe ajuta la pastrarea alinierii cand valorile din
+   dashboard se schimba. */
+
+/* Dashboard metric chips and recent rental avatars */
+.stat-icon,
+.metric-chip {
+    -fx-alignment: center;
+    -fx-min-width: 42px;
+    -fx-pref-width: 42px;
+    -fx-min-height: 26px;
+    -fx-pref-height: 26px;
+    -fx-padding: 0 8px;
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+    -fx-border-width: 0.5px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.recent-avatar,
+.mini-avatar-badge,
+.recent-rental-avatar {
+    -fx-alignment: center;
+    -fx-min-width: 34px;
+    -fx-pref-width: 34px;
+    -fx-min-height: 34px;
+    -fx-pref-height: 34px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 0.5px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.theme-light .stat-icon-amber,
+.theme-light .metric-chip {
+    -fx-background-color: #FFF3E4;
+    -fx-border-color: #F0C98C;
+    -fx-text-fill: #7A4B00;
+}
+
+.theme-light .stat-icon-teal {
+    -fx-background-color: #E1F5EE;
+    -fx-border-color: #A8DEC9;
+    -fx-text-fill: #085041;
+}
+
+.theme-light .stat-icon-blue {
+    -fx-background-color: #EEF2FF;
+    -fx-border-color: #C9D5FF;
+    -fx-text-fill: #1A46A8;
+}
+
+.theme-light .stat-icon-orange {
+    -fx-background-color: #FAECE7;
+    -fx-border-color: #E9B9AE;
+    -fx-text-fill: #8B3018;
+}
+
+.theme-light .recent-avatar,
+.theme-light .mini-avatar-badge,
+.theme-light .recent-rental-avatar {
+    -fx-background-color: #FFF3E4;
+    -fx-border-color: #F0C98C;
+    -fx-text-fill: #7A4B00;
+}
+
+.theme-dark .stat-icon-amber,
+.theme-dark .metric-chip {
+    -fx-background-color: #2A1D0D;
+    -fx-border-color: #6B4212;
+    -fx-text-fill: #F2C078;
+}
+
+.theme-dark .stat-icon-teal {
+    -fx-background-color: #123A2F;
+    -fx-border-color: #1E6B55;
+    -fx-text-fill: #74F2C0;
+}
+
+.theme-dark .stat-icon-blue {
+    -fx-background-color: #1B2546;
+    -fx-border-color: #304A8A;
+    -fx-text-fill: #AFC4FF;
+}
+
+.theme-dark .stat-icon-orange {
+    -fx-background-color: #44201D;
+    -fx-border-color: #7A342B;
+    -fx-text-fill: #FFB4A8;
+}
+
+.theme-dark .recent-avatar,
+.theme-dark .mini-avatar-badge,
+.theme-dark .recent-rental-avatar {
+    -fx-background-color: #2A1D0D;
+    -fx-border-color: #6B4212;
+    -fx-text-fill: #F2C078;
+}
+
+.theme-amber .stat-icon-amber,
+.theme-amber .metric-chip {
+    -fx-background-color: #2A1D0D;
+    -fx-border-color: #6B4212;
+    -fx-text-fill: #F2C078;
+}
+
+.theme-amber .stat-icon-teal {
+    -fx-background-color: #123A2F;
+    -fx-border-color: #1E6B55;
+    -fx-text-fill: #74F2C0;
+}
+
+.theme-amber .stat-icon-blue {
+    -fx-background-color: #1B2546;
+    -fx-border-color: #304A8A;
+    -fx-text-fill: #AFC4FF;
+}
+
+.theme-amber .stat-icon-orange {
+    -fx-background-color: #44201D;
+    -fx-border-color: #7A342B;
+    -fx-text-fill: #FFB4A8;
+}
+
+.theme-amber .recent-avatar,
+.theme-amber .mini-avatar-badge,
+.theme-amber .recent-rental-avatar {
+    -fx-background-color: #2A1D0D;
+    -fx-border-color: #6B4212;
+    -fx-text-fill: #F2C078;
+}
+

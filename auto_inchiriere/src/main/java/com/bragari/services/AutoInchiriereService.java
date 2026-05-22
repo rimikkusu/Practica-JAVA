@@ -1,5 +1,8 @@
 package com.bragari.services;
 
+// Service-ul acesta este stratul principal de logica al aplicatiei.
+// Interfata apeleaza service-ul, iar service-ul apeleaza repository-urile.
+
 import java.util.List;
 
 import com.bragari.models.Automobil;

@@ -1,5 +1,8 @@
 package com.bragari.util;
 
+// ViewFactory contine metode pentru construirea componentelor comune din pagini.
+// Este mai usor asa, pentru ca butoanele, cardurile si layout-urile arata la fel.
+
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;

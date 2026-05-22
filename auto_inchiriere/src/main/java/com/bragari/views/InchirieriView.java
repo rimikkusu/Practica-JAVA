@@ -1,5 +1,8 @@
 package com.bragari.views;
 
+// InchirieriView construieste pagina pentru contractele de inchiriere.
+// Aici alegem clientul, masina, perioada si statusul inchirierii.
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;

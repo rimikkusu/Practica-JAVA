@@ -1,5 +1,8 @@
 package com.bragari.views;
 
+// AutomobileView construieste pagina unde se vad si se modifica masinile.
+// Aici se leaga formularul, tabelul si butoanele pentru automobile.
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;

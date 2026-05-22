@@ -1,0 +1,147 @@
+/* Sidebar and navigation */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Controleaza meniul lateral: dimensiune fixa, header, elemente de navigare,
+   starea activa si zona de utilizator din footer. Clasele .active sunt adaugate
+   din Java cand utilizatorul schimba pagina. */
+
+/* Sidebar */
+.sidebar {
+    -fx-background-color: #09090F;
+    -fx-pref-width: 196px;
+    -fx-min-width: 196px;
+    -fx-max-width: 196px;
+    -fx-padding: 0;
+    -fx-spacing: 0;
+}
+
+.sidebar-header {
+    -fx-background-color: #09090F;
+    -fx-padding: 16px 16px 13px 16px;
+    -fx-border-color: rgba(255,255,255,0.06);
+    -fx-border-width: 0 0 0.5 0;
+}
+
+.sidebar-logo-mark,
+.brand-badge,
+.login-logo-box,
+.login-badge {
+    -fx-background-color: #E8952A;
+    -fx-background-radius: 7px;
+    -fx-pref-width: 32px;
+    -fx-pref-height: 32px;
+    -fx-alignment: center;
+}
+
+.sidebar-logo-text {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-app-name,
+.brand-title {
+    -fx-text-fill: #E0E0F0;
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-brand-title {
+    -fx-text-fill: #F5F5FA;
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 0 8px 0;
+    -fx-border-color: transparent transparent #E8952A transparent;
+    -fx-border-width: 0 0 2px 0;
+}
+
+.sidebar-version,
+.brand-subtitle {
+    -fx-text-fill: #38386A;
+    -fx-font-size: 9.5px;
+}
+
+.sidebar-nav {
+    -fx-spacing: 2px;
+    -fx-padding: 10px 0;
+}
+
+.nav-item {
+    -fx-background-color: transparent;
+    -fx-padding: 7.5px 16px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 0 2px;
+    -fx-cursor: hand;
+    -fx-pref-width: 196px;
+    -fx-max-width: 196px;
+    -fx-alignment: center-left;
+}
+
+.nav-item:hover {
+    -fx-background-color: rgba(255,255,255,0.02);
+}
+
+.nav-item .nav-icon {
+    -fx-text-fill: #484888;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 18px;
+    -fx-alignment: center;
+}
+
+.nav-item .nav-label {
+    -fx-text-fill: #6060A0;
+    -fx-font-size: 12px;
+}
+
+.nav-item.active {
+    -fx-background-color: rgba(232,149,42,0.07);
+    -fx-border-color: #E8952A;
+}
+
+.nav-item.active .nav-icon {
+    -fx-text-fill: #E8952A;
+}
+
+.nav-item.active .nav-label {
+    -fx-text-fill: #DCDCE8;
+}
+
+.nav-separator {
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-pref-height: 0.5px;
+    -fx-max-height: 0.5px;
+    -fx-min-height: 0.5px;
+}
+
+.sidebar-footer {
+    -fx-background-color: #09090F;
+    -fx-padding: 10px 16px 14px 16px;
+    -fx-border-color: rgba(255,255,255,0.05);
+    -fx-border-width: 0.5 0 0 0;
+    -fx-spacing: 10px;
+}
+
+.sidebar-avatar,
+.avatar-badge {
+    -fx-background-color: #E8952A;
+    -fx-background-radius: 50px;
+    -fx-pref-width: 24px;
+    -fx-pref-height: 24px;
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-font-size: 9.5px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-username,
+.sidebar-user-name {
+    -fx-text-fill: #6868A8;
+    -fx-font-size: 11px;
+}
+
+.sidebar-role,
+.sidebar-user-role {
+    -fx-text-fill: #383860;
+    -fx-font-size: 9.5px;
+}
+

@@ -1,0 +1,156 @@
+/* Database table page backgrounds and selection */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Se ocupa de paginile de baza de date care au fundal cu imagine si tabele
+   transparente. Este incarcat la final pentru ca aceste reguli sa bata stilurile
+   generale de tabele definite in 06-tables.css. */
+
+/* Database table pages background */
+.table-page-background {
+    -fx-background-image: url("/images/futuristic_city_skyline_with_glowing_path.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-color: #05070D;
+}
+
+.table-page-overlay {
+    -fx-background-color: linear-gradient(to bottom right, rgba(5, 7, 13, 0.28), rgba(5, 7, 13, 0.16));
+}
+
+.table-page-background .table-page-content {
+    -fx-background-color: transparent;
+}
+
+.table-page-background .content-card {
+    -fx-background-color: rgba(9, 9, 15, 0.42);
+    -fx-border-color: rgba(232, 149, 42, 0.34);
+    -fx-border-width: 1px;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.34), 28, 0, 0, 14);
+}
+
+.table-page-background .page-toolbar {
+    -fx-background-color: transparent;
+}
+
+.table-page-background .label,
+.table-page-background .card-title {
+    -fx-text-fill: #F5F5FA;
+}
+
+.table-page-background .muted-label,
+.table-page-background .page-subtitle {
+    -fx-text-fill: #C7C7D8;
+}
+
+.table-page-background .search-field,
+.table-page-background .text-field,
+.table-page-background .combo-box,
+.table-page-background .date-picker {
+    -fx-background-color: rgba(24, 24, 32, 0.84);
+    -fx-border-color: rgba(255, 255, 255, 0.18);
+    -fx-text-fill: #F5F5FA;
+    -fx-prompt-text-fill: #B8B8C8;
+}
+
+.table-page-background .search-field:focused,
+.table-page-background .text-field:focused,
+.table-page-background .combo-box:focused,
+.table-page-background .date-picker:focused {
+    -fx-border-color: #E8952A;
+    -fx-background-color: rgba(24, 24, 32, 0.94);
+}
+
+.table-page-background .combo-box .list-cell,
+.table-page-background .date-picker .text-field {
+    -fx-text-fill: #F5F5FA;
+}
+
+.table-page-background .table-content-area {
+    -fx-background-color: transparent;
+}
+
+.table-page-background .table-view,
+.table-page-background .app-table {
+    -fx-background-color: rgba(9, 9, 15, 0.24);
+    -fx-border-color: rgba(255, 255, 255, 0.16);
+    -fx-border-width: 1px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-table-cell-border-color: rgba(255, 255, 255, 0.06);
+}
+
+.table-page-background .table-view .column-header-background,
+.table-page-background .table-view .column-header,
+.table-page-background .table-view .filler {
+    -fx-background-color: rgba(17, 17, 26, 0.72);
+    -fx-border-color: rgba(255, 255, 255, 0.14);
+}
+
+.table-page-background .table-view .column-header .label {
+    -fx-text-fill: #D8D8E8;
+}
+
+.table-page-background .table-view .table-row-cell {
+    -fx-background-color: rgba(13, 14, 22, 0.48);
+    -fx-border-color: rgba(255, 255, 255, 0.09);
+}
+
+.table-page-background .table-view .table-row-cell:odd {
+    -fx-background-color: rgba(18, 19, 28, 0.40);
+}
+
+.table-page-background .table-view .table-row-cell:hover {
+    -fx-background-color: rgba(232, 149, 42, 0.22);
+}
+
+.table-page-background .table-view .table-row-cell:selected {
+    -fx-background-color: rgba(232, 149, 42, 0.34);
+}
+
+.table-page-background .table-view .table-cell,
+.table-page-background .table-view .table-cell .text,
+.table-page-background .table-row-cell .text {
+    -fx-text-fill: #F5F5FA;
+}
+
+.table-page-background .table-view .placeholder .label {
+    -fx-text-fill: #C7C7D8;
+}
+
+.table-page-background .table-view .virtual-flow,
+.table-page-background .table-view .clipped-container,
+.table-page-background .table-view .sheet,
+.table-page-background .table-view .sheet .cell {
+    -fx-background-color: transparent;
+}
+
+/* Stronger row selection for all table pages */
+.table-view .table-row-cell:filled:selected,
+.theme-light .table-view .table-row-cell:filled:selected,
+.theme-dark .table-view .table-row-cell:filled:selected,
+.theme-amber .table-view .table-row-cell:filled:selected,
+.table-page-background .table-view .table-row-cell:filled:selected {
+    -fx-background-color: linear-gradient(to right, rgba(232, 149, 42, 0.50), rgba(232, 149, 42, 0.24));
+    -fx-border-color: transparent transparent transparent #E8952A;
+    -fx-border-width: 0 0 0 4px;
+}
+
+.table-view .table-row-cell:filled:selected .table-cell,
+.table-view .table-row-cell:filled:selected .text,
+.theme-light .table-view .table-row-cell:filled:selected .table-cell,
+.theme-light .table-view .table-row-cell:filled:selected .text,
+.theme-dark .table-view .table-row-cell:filled:selected .table-cell,
+.theme-dark .table-view .table-row-cell:filled:selected .text,
+.theme-amber .table-view .table-row-cell:filled:selected .table-cell,
+.theme-amber .table-view .table-row-cell:filled:selected .text,
+.table-page-background .table-view .table-row-cell:filled:selected .table-cell,
+.table-page-background .table-view .table-row-cell:filled:selected .text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.table-page-background .table-view .table-row-cell:filled:selected:hover {
+    -fx-background-color: linear-gradient(to right, rgba(232, 149, 42, 0.62), rgba(232, 149, 42, 0.32));
+}

@@ -1,5 +1,8 @@
 package com.bragari.services;
 
+// ValidatorService verifica datele introduse in formulare.
+// Asa prindem greselile inainte sa ajunga datele in baza de date.
+
 import com.bragari.models.Automobil;
 import com.bragari.models.CategorieAuto;
 import com.bragari.models.Client;

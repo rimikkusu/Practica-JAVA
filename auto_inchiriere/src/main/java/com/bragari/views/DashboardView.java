@@ -1,5 +1,8 @@
 package com.bragari.views;
 
+// DashboardView este pagina de start cu statistici si grafice.
+// Ea aduna date din service si le arata pe scurt, ca un rezumat al aplicatiei.
+
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;

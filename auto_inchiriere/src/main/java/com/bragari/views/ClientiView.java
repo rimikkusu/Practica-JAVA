@@ -1,5 +1,8 @@
 package com.bragari.views;
 
+// ClientiView construieste pagina de clienti.
+// In aceasta pagina utilizatorul poate vedea, cauta, adauga si modifica clienti.
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;

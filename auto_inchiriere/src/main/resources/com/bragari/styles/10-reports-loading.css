@@ -1,0 +1,61 @@
+/* Reports, skeletons, and loading states */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Contine zona de rapoarte si elementele skeleton afisate cat timp datele se
+   incarca in fundal. Astfel, feedback-ul vizual pentru asteptare este tinut
+   separat de tabele si formulare. */
+
+/* Reports */
+.report-area {
+    -fx-background-color: white;
+    -fx-border-color: #EAE7E0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 0.5px;
+    -fx-padding: 14px;
+    -fx-font-family: "JetBrains Mono", "Consolas", "Courier New";
+    -fx-font-size: 11.5px;
+    -fx-text-fill: #24243A;
+    -fx-control-inner-background: white;
+    -fx-wrap-text: false;
+}
+
+.report-area .content {
+    -fx-background-color: white;
+}
+
+/* Local skeleton loading */
+.skeleton-table,
+.skeleton-report {
+    -fx-spacing: 10px;
+}
+
+.skeleton-row {
+    -fx-spacing: 10px;
+}
+
+.skeleton-box,
+.skeleton-header-box {
+    -fx-background-color: #EEE9E0;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.skeleton-header-box {
+    -fx-background-color: #E4DDD2;
+}
+
+.skeleton-card {
+    -fx-background-color: white;
+    -fx-border-color: #EAE7E0;
+    -fx-border-width: 0.5px;
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+    -fx-padding: 14px;
+    -fx-spacing: 10px;
+    -fx-pref-width: 168px;
+}
+
+.progress-indicator {
+    -fx-progress-color: #E8952A;
+}
+

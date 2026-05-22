@@ -1,5 +1,8 @@
 package com.bragari.repositories;
 
+// Repository-ul acesta citeste si salveaza categoriile auto in baza de date.
+// Este separat ca sa nu amestecam logica de categorii cu logica de automobile.
+
 import java.util.List;
 
 import com.bragari.database.SqlHelper;

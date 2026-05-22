@@ -1,5 +1,8 @@
 package com.bragari;
 
+// MainApp este clasa principala a interfetei. Aici se porneste fereastra,
+// se incarca paginile si se tine minte ce utilizator este logat.
+
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;

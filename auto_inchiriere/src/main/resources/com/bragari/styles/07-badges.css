@@ -1,0 +1,46 @@
+/* Badges and status labels */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Badge-urile sunt etichete vizuale scurte pentru statusuri: activ, finalizat,
+   disponibil, roluri de utilizator sau categorii auto. Ele sunt doar clase CSS,
+   deci acelasi control Java poate primi alta culoare prin alta clasa. */
+
+/* Badges */
+.badge,
+.status-badge {
+    -fx-background-radius: 12px;
+    -fx-padding: 2px 7px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.badge-activa,
+.status-success {
+    -fx-background-color: #E1F5EE;
+    -fx-text-fill: #085041;
+}
+
+.badge-finalizata,
+.status-neutral,
+.status-user {
+    -fx-background-color: #EFEFF5;
+    -fx-text-fill: #58586A;
+}
+
+.badge-anulata,
+.status-danger {
+    -fx-background-color: #FAECE7;
+    -fx-text-fill: #8B3018;
+}
+
+.badge-disponibil { -fx-background-color: #E1F5EE; -fx-text-fill: #085041; }
+.badge-indisponibil { -fx-background-color: #FAECE7; -fx-text-fill: #8B3018; }
+.badge-suv { -fx-background-color: #F0F4FF; -fx-text-fill: #3B52B4; }
+.badge-sedan { -fx-background-color: #FFF8EC; -fx-text-fill: #7A4500; }
+.badge-electric { -fx-background-color: #EDFCF0; -fx-text-fill: #1A6B3C; }
+.badge-luxury { -fx-background-color: #F9EDFF; -fx-text-fill: #6A2090; }
+.badge-hatchback { -fx-background-color: #F0F4FF; -fx-text-fill: #3B52B4; }
+.badge-info,
+.status-info { -fx-background-color: #EEF2FF; -fx-text-fill: #1A46A8; }
+.status-admin { -fx-background-color: #FAEEDA; -fx-text-fill: #5A3006; }
+

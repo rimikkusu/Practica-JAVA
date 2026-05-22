@@ -1,0 +1,148 @@
+/* Login page */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Stilizeaza ecranul de autentificare: fundalul cu imagine, overlay-ul, cardul de
+   login si campurile speciale. La final exista override-uri pentru ca loginul sa
+   arate corect indiferent de tema selectata. */
+
+/* Login */
+.login-root,
+.login-page {
+    -fx-background-color: #08080E;
+    -fx-alignment: center;
+}
+
+.login-background {
+    -fx-background-image: url("/images/login-hero.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}
+
+.login-overlay {
+    -fx-background-color: linear-gradient(to right, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.30));
+}
+
+.login-layout {
+    -fx-alignment: center;
+    -fx-spacing: 28px;
+    -fx-max-width: 960px;
+}
+
+.login-hero-panel {
+    -fx-background-color: rgba(255,255,255,0.035);
+    -fx-border-color: rgba(255,255,255,0.08);
+    -fx-border-radius: 14px;
+    -fx-background-radius: 14px;
+    -fx-padding: 10px;
+    -fx-min-width: 280px;
+}
+
+.login-hero-image {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.35), 18, 0, 0, 8);
+}
+
+.login-card {
+    -fx-background-color: linear-gradient(to bottom right, rgba(11, 15, 25, 0.58), rgba(9, 9, 15, 0.40));
+    -fx-border-color: rgba(232, 149, 42, 0.42);
+    -fx-border-radius: 22px;
+    -fx-background-radius: 22px;
+    -fx-border-width: 1px;
+    -fx-padding: 34px 38px;
+    -fx-pref-width: 360px;
+    -fx-spacing: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.42), 30, 0, 0, 14);
+}
+
+.login-logo-box {
+    -fx-background-radius: 8px;
+    -fx-pref-width: 38px;
+    -fx-pref-height: 38px;
+}
+
+.login-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F5F5FA;
+}
+
+.login-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #D8D8E8;
+}
+
+.login-field-label {
+    -fx-font-size: 9.5px;
+    -fx-text-fill: #D6D3E8;
+    -fx-font-weight: bold;
+}
+
+.login-input {
+    -fx-background-color: rgba(255,255,255,0.14);
+    -fx-border-color: rgba(255,255,255,0.28);
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-border-width: 0.5px;
+    -fx-padding: 8px 11px;
+    -fx-text-fill: #F5F5FA;
+    -fx-font-size: 12.5px;
+    -fx-prompt-text-fill: #C7C7D8;
+}
+
+.login-input:focused {
+    -fx-border-color: #E8952A;
+    -fx-background-color: rgba(232,149,42,0.06);
+}
+
+.login-button {
+    -fx-background-color: #E8952A;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-pref-width: 236px;
+    -fx-padding: 12px 0;
+    -fx-cursor: hand;
+}
+
+.login-button:hover {
+    -fx-background-color: #D4831A;
+}
+
+.login-card .label,
+.theme-light .login-card .label,
+.theme-dark .login-card .label,
+.theme-amber .login-card .label {
+    -fx-text-fill: #E8E8F4;
+}
+
+.login-card .login-title,
+.theme-light .login-card .login-title,
+.theme-dark .login-card .login-title,
+.theme-amber .login-card .login-title {
+    -fx-text-fill: #F5F5FA;
+}
+
+.login-card .login-subtitle,
+.theme-light .login-card .login-subtitle,
+.theme-dark .login-card .login-subtitle,
+.theme-amber .login-card .login-subtitle {
+    -fx-text-fill: #D8D8E8;
+}
+
+.login-card .login-field-label,
+.theme-light .login-card .login-field-label,
+.theme-dark .login-card .login-field-label,
+.theme-amber .login-card .login-field-label {
+    -fx-text-fill: #D6D3E8;
+}
+
+.login-card .login-input,
+.theme-light .login-card .login-input,
+.theme-dark .login-card .login-input,
+.theme-amber .login-card .login-input {
+    -fx-background-color: rgba(255,255,255,0.14);
+    -fx-border-color: rgba(255,255,255,0.28);
+    -fx-text-fill: #F5F5FA;
+    -fx-prompt-text-fill: #C7C7D8;
+}
+

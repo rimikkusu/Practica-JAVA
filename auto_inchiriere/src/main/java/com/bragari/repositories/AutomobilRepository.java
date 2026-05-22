@@ -1,5 +1,8 @@
 package com.bragari.repositories;
 
+// Repository-ul pentru automobile face operatiile cu tabela automobile.
+// Aici sunt query-urile pentru adaugare, modificare, stergere si cautare masini.
+
 import java.util.List;
 
 import com.bragari.database.SqlHelper;

@@ -1,0 +1,96 @@
+/* Cards and stat widgets */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Contine cardurile simple si cardurile cu statistici din dashboard. Stilurile
+   pentru .stat-icon-* coloreaza rapid indicatorii fara sa fie nevoie de cod Java
+   separat pentru fiecare culoare. */
+
+/* Cards */
+.card,
+.content-card {
+    -fx-background-color: white;
+    -fx-border-color: #EAE7E0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 0.5px;
+    -fx-padding: 14px;
+    -fx-spacing: 14px;
+    -fx-effect: none;
+}
+
+.card-header {
+    -fx-background-color: white;
+    -fx-border-color: #F2EFE8;
+    -fx-border-width: 0 0 0.5 0;
+    -fx-padding: 10px 14px;
+}
+
+.card-title {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #18181E;
+}
+
+.card-link {
+    -fx-font-size: 11px;
+    -fx-text-fill: #E8952A;
+    -fx-cursor: hand;
+}
+
+/* Stat cards */
+.stat-grid {
+    -fx-hgap: 10px;
+    -fx-vgap: 10px;
+}
+
+.stat-card {
+    -fx-background-color: white;
+    -fx-border-color: #EAE7E0;
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+    -fx-border-width: 0.5px;
+    -fx-padding: 12px 14px;
+    -fx-spacing: 6px;
+    -fx-pref-width: 168px;
+}
+
+.stat-label {
+    -fx-font-size: 9.5px;
+    -fx-text-fill: #9090A8;
+    -fx-font-weight: normal;
+}
+
+.stat-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #18181E;
+    -fx-font-family: "JetBrains Mono", "Consolas", "Courier New";
+}
+
+.stat-caption,
+.stat-delta-neutral {
+    -fx-font-size: 10px;
+    -fx-text-fill: #9090A8;
+}
+
+.stat-delta-up {
+    -fx-font-size: 10px;
+    -fx-text-fill: #0F9E75;
+}
+
+.stat-delta-down {
+    -fx-font-size: 10px;
+    -fx-text-fill: #D94040;
+}
+
+.stat-icon {
+    -fx-padding: 6px 10px;
+    -fx-background-radius: 5px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.stat-icon-amber { -fx-background-color: #FFF3E4; -fx-text-fill: #5A3006; }
+.stat-icon-teal  { -fx-background-color: #E1F5EE; -fx-text-fill: #085041; }
+.stat-icon-blue  { -fx-background-color: #EEF2FF; -fx-text-fill: #1A46A8; }
+.stat-icon-orange{ -fx-background-color: #FAF0EA; -fx-text-fill: #8B3018; }
+

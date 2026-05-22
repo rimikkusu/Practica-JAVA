@@ -1,5 +1,8 @@
 package com.bragari.views;
 
+// LoginView este ecranul unde utilizatorul introduce username si parola.
+// Daca datele sunt corecte, pagina principala se deschide.
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 

@@ -1,0 +1,87 @@
+/* Base table styles */
+/* Split from application.css. Keep this file in the load order defined by DialogHelper. */
+/* Defineste aspectul de baza pentru TableView: antet, randuri, celule si selectii.
+   Regulile speciale pentru paginile cu fundal imagine sunt pastrate mai tarziu in
+   16-table-pages.css, ca sa poata suprascrie aceste valori generale. */
+
+/* Tables */
+.table-view,
+.app-table {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-table-cell-border-color: #F5F2EC;
+    -fx-padding: 0;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #FDFCF8;
+    -fx-border-color: #F2EFE8;
+    -fx-border-width: 0 0 0.5 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 8px 14px;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 9.5px;
+    -fx-text-fill: #9090A8;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: #F5F2EC;
+    -fx-border-width: 0 0 0.5 0;
+    -fx-pref-height: 36px;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #FBF8F4;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #FFF3E4;
+}
+
+.table-view .table-row-cell:selected .table-cell {
+    -fx-text-fill: #18181E;
+}
+
+.table-view .table-cell {
+    -fx-font-size: 12px;
+    -fx-text-fill: #24243A;
+    -fx-padding: 0px 14px;
+    -fx-alignment: center-left;
+    -fx-border-color: transparent;
+}
+
+.table-view:focused {
+    -fx-background-insets: 0;
+}
+
+.mono-text,
+.table-cell-id,
+.table-cell-number,
+.recent-amount {
+    -fx-font-family: "JetBrains Mono", "Consolas", "Courier New";
+}
+
+.table-cell-id {
+    -fx-font-size: 11px;
+    -fx-text-fill: #A0A0B8;
+}
+
+.table-cell-number {
+    -fx-font-size: 11.5px;
+    -fx-text-fill: #18181E;
+}
+
+.table-cell-name {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+

@@ -1,5 +1,8 @@
 package com.bragari.models;
 
+// BaseEntity este clasa de baza pentru modelele care au id.
+// Am pus id-ul aici ca sa nu il repetam separat in fiecare model.
+
 public abstract class BaseEntity {
     private int id;
 

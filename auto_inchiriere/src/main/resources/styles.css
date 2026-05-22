@@ -630,7 +630,7 @@
 
 /* Setarile noi sunt aplicate prin clase globale pe appRoot.
    Regulile complete pentru teme, text si densitatea tabelelor sunt in
-   /com/bragari/styles/application.css, incarcat dupa acest fisier. */
+   fisierele din /com/bragari/styles/, incarcate dupa acest fisier. */
 .theme-light,
 .theme-dark,
 .theme-amber,

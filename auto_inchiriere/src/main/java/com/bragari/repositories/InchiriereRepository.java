@@ -1,5 +1,8 @@
 package com.bragari.repositories;
 
+// Repository-ul de inchirieri lucreaza cu tabela principala pentru contracte.
+// Aici se fac si legaturile dintre client, automobil, status si datele perioadei.
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;

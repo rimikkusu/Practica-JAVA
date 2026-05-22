@@ -1,5 +1,8 @@
 package com.bragari.database;
 
+// Clasa asta se ocupa de conexiunea la baza de date, ca restul proiectului
+// sa nu trebuiasca sa scrie mereu aceleasi setari pentru PostgreSQL.
+
 import java.sql.Connection;
 import java.sql.SQLException;
 

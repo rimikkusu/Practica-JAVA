@@ -1,5 +1,8 @@
 package com.bragari.util;
 
+// FormValidator ajuta interfata sa marcheze campurile gresite.
+// Practic, aici sunt reguli mici pentru mesaje si validari vizuale.
+
 import java.time.LocalDate;
 
 import com.bragari.models.Automobil;
