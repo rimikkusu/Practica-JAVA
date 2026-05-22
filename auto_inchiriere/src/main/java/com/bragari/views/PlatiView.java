@@ -191,6 +191,7 @@ public class PlatiView {
 
         TextField sumaField = new TextField();
         sumaField.setPromptText("Suma");
+        ViewFactory.acceptaDoarNumarDecimal(sumaField);
 
         ComboBox<String> metodaComboBox = new ComboBox<>();
         metodaComboBox.setItems(FXCollections.observableArrayList("CARD", "CASH", "TRANSFER"));
@@ -227,7 +228,7 @@ public class PlatiView {
         adaugaButton.setOnAction(e -> {
             try {
                 Inchiriere inchiriere = inchiriereComboBox.getValue();
-                String sumaText = sumaField.getText();
+                String sumaText = FormValidator.normalizeazaText(sumaField.getText());
                 String metoda = metodaComboBox.getValue();
                 LocalDate dataPlata = dataPlataPicker.getValue();
 
@@ -260,6 +261,7 @@ public class PlatiView {
         refreshInchirieriComboBox(inchiriereComboBox);
 
         TextField sumaField = new TextField(String.valueOf(selectedPlata.getSuma()));
+        ViewFactory.acceptaDoarNumarDecimal(sumaField);
 
         ComboBox<String> metodaComboBox = new ComboBox<>();
         metodaComboBox.setItems(FXCollections.observableArrayList("CARD", "CASH", "TRANSFER"));
@@ -295,7 +297,7 @@ public class PlatiView {
         salveazaButton.setOnAction(e -> {
             try {
                 Inchiriere inchiriere = inchiriereComboBox.getValue();
-                String sumaText = sumaField.getText();
+                String sumaText = FormValidator.normalizeazaText(sumaField.getText());
                 String metoda = metodaComboBox.getValue();
                 LocalDate dataPlata = dataPlataPicker.getValue();
 

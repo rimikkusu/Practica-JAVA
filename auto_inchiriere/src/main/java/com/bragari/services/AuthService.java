@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.bragari.models.Utilizator;
 import com.bragari.repositories.UtilizatorRepository;
+import com.bragari.util.FormValidator;
 import com.bragari.util.PasswordUtil;
 
 public class AuthService {
@@ -36,13 +37,7 @@ public class AuthService {
     }
 
     public void creeazaUtilizator(String username, String parola, String rol) {
-        if (esteGol(username)) {
-            throw new IllegalArgumentException("Username este obligatoriu.");
-        }
-
-        if (esteGol(parola)) {
-            throw new IllegalArgumentException("Parola este obligatorie.");
-        }
+        FormValidator.valideazaUtilizatorForm(username, parola, rol);
 
         String rolFinal = normalizeazaRol(rol);
         String passwordHash = PasswordUtil.hashPassword(parola);
@@ -52,9 +47,7 @@ public class AuthService {
     }
 
     public void schimbaParola(int userId, String parolaNoua) {
-        if (esteGol(parolaNoua)) {
-            throw new IllegalArgumentException("Parola noua este obligatorie.");
-        }
+        FormValidator.valideazaParola(parolaNoua);
 
         Utilizator utilizator = utilizatorRepository.cautaDupaId(userId);
 

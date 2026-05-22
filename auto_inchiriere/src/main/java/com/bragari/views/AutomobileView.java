@@ -143,6 +143,7 @@ public class AutomobileView {
         disponibileButton.getStyleClass().add("secondary-button");
 
         HBox buttons = new HBox(10);
+        buttons.getChildren().add(new Label("AutomobileView: Butoanele au fost adaugate in toolbar."));
         buttons.getStyleClass().add("page-toolbar");
         buttons.getChildren().addAll(
                 adaugaButton,
@@ -234,15 +235,19 @@ public class AutomobileView {
 
         TextField marcaField = new TextField();
         marcaField.setPromptText("Marca");
+        ViewFactory.acceptaDoarTextAuto(marcaField);
 
         TextField modelField = new TextField();
         modelField.setPromptText("Model");
+        ViewFactory.acceptaDoarTextAuto(modelField);
 
         TextField numarField = new TextField();
         numarField.setPromptText("Numar inmatriculare");
+        ViewFactory.acceptaDoarNumarInmatriculare(numarField);
 
         TextField pretField = new TextField();
         pretField.setPromptText("Pret pe zi");
+        ViewFactory.acceptaDoarNumarDecimal(pretField);
 
         CheckBox disponibilCheckBox = new CheckBox("Disponibil");
         disponibilCheckBox.setSelected(true);
@@ -270,10 +275,10 @@ public class AutomobileView {
         adaugaButton.setOnAction(e -> {
             try {
                 CategorieAuto categorie = categorieComboBox.getValue();
-                String marca = marcaField.getText();
-                String model = modelField.getText();
-                String numar = numarField.getText();
-                String pretText = pretField.getText();
+                String marca = FormValidator.normalizeazaText(marcaField.getText());
+                String model = FormValidator.normalizeazaText(modelField.getText());
+                String numar = FormValidator.normalizeazaNumarInmatriculare(numarField.getText());
+                String pretText = FormValidator.normalizeazaText(pretField.getText());
 
                 FormValidator.valideazaAutomobilForm(categorie, marca, model, numar, pretText);
 
@@ -307,6 +312,10 @@ public class AutomobileView {
         TextField modelField = new TextField(selectedAutomobil.getModel());
         TextField numarField = new TextField(selectedAutomobil.getNumarInmatriculare());
         TextField pretField = new TextField(String.valueOf(selectedAutomobil.getPretPeZi()));
+        ViewFactory.acceptaDoarTextAuto(marcaField);
+        ViewFactory.acceptaDoarTextAuto(modelField);
+        ViewFactory.acceptaDoarNumarInmatriculare(numarField);
+        ViewFactory.acceptaDoarNumarDecimal(pretField);
 
         CheckBox disponibilCheckBox = new CheckBox("Disponibil");
         disponibilCheckBox.setSelected(selectedAutomobil.isDisponibil());
@@ -334,10 +343,10 @@ public class AutomobileView {
         salveazaButton.setOnAction(e -> {
             try {
                 CategorieAuto categorie = categorieComboBox.getValue();
-                String marca = marcaField.getText();
-                String model = modelField.getText();
-                String numar = numarField.getText();
-                String pretText = pretField.getText();
+                String marca = FormValidator.normalizeazaText(marcaField.getText());
+                String model = FormValidator.normalizeazaText(modelField.getText());
+                String numar = FormValidator.normalizeazaNumarInmatriculare(numarField.getText());
+                String pretText = FormValidator.normalizeazaText(pretField.getText());
 
                 FormValidator.valideazaAutomobilForm(categorie, marca, model, numar, pretText);
 

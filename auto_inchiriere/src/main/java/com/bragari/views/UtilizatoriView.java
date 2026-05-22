@@ -10,6 +10,7 @@ import com.bragari.services.AuthService;
 import com.bragari.services.SettingsService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.DialogHelper;
+import com.bragari.util.FormValidator;
 import com.bragari.util.ViewFactory;
 
 import javafx.collections.FXCollections;
@@ -170,6 +171,7 @@ public class UtilizatoriView {
     private void showAddUtilizatorDialog() {
         TextField usernameField = new TextField();
         usernameField.setPromptText("Username");
+        ViewFactory.acceptaDoarUsername(usernameField);
 
         PasswordField parolaField = new PasswordField();
         parolaField.setPromptText("Parola");
@@ -195,19 +197,11 @@ public class UtilizatoriView {
 
         adaugaButton.setOnAction(e -> {
             try {
-                String username = usernameField.getText();
+                String username = FormValidator.normalizeazaText(usernameField.getText());
                 String parola = parolaField.getText();
                 String rol = rolComboBox.getValue();
 
-                if (username == null || username.isBlank()) {
-                    DialogHelper.showError(dialog, "Username este obligatoriu.");
-                    return;
-                }
-
-                if (parola == null || parola.isBlank()) {
-                    DialogHelper.showError(dialog, "Parola este obligatorie.");
-                    return;
-                }
+                FormValidator.valideazaUtilizatorForm(username, parola, rol);
 
                 backgroundRunner.run(() -> {
                     authService.creeazaUtilizator(username, parola, rol);
@@ -247,10 +241,7 @@ public class UtilizatoriView {
             try {
                 String parolaNoua = parolaField.getText();
 
-                if (parolaNoua == null || parolaNoua.isBlank()) {
-                    DialogHelper.showError(dialog, "Parola noua este obligatorie.");
-                    return;
-                }
+                FormValidator.valideazaParola(parolaNoua);
 
                 backgroundRunner.run(() -> {
                     authService.schimbaParola(utilizator.getId(), parolaNoua);

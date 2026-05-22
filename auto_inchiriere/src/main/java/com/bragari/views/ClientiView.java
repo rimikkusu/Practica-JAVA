@@ -161,12 +161,14 @@ public class ClientiView {
     private void showAddClientDialog() {
         TextField numeField = new TextField();
         numeField.setPromptText("Nume");
+        ViewFactory.acceptaDoarNume(numeField);
 
         TextField telefonField = new TextField();
         telefonField.setPromptText("Telefon");
+        ViewFactory.acceptaDoarTelefon(telefonField);
 
         TextField emailField = new TextField();
-        emailField.setPromptText("Email");
+        emailField.setPromptText("exemplu@domeniu.com");
 
         GridPane form = new GridPane();
         form.setHgap(10);
@@ -185,9 +187,9 @@ public class ClientiView {
 
         adaugaButton.setOnAction(e -> {
             try {
-                String nume = numeField.getText();
-                String telefon = telefonField.getText();
-                String email = emailField.getText();
+                String nume = FormValidator.normalizeazaText(numeField.getText());
+                String telefon = FormValidator.normalizeazaTelefon(telefonField.getText());
+                String email = FormValidator.normalizeazaEmail(emailField.getText());
 
                 FormValidator.valideazaClientForm(nume, telefon, email);
 
@@ -214,6 +216,8 @@ public class ClientiView {
         TextField numeField = new TextField(selectedClient.getNume());
         TextField telefonField = new TextField(selectedClient.getTelefon());
         TextField emailField = new TextField(selectedClient.getEmail());
+        ViewFactory.acceptaDoarNume(numeField);
+        ViewFactory.acceptaDoarTelefon(telefonField);
 
         GridPane form = new GridPane();
         form.setHgap(10);
@@ -232,9 +236,9 @@ public class ClientiView {
 
         salveazaButton.setOnAction(e -> {
             try {
-                String nume = numeField.getText();
-                String telefon = telefonField.getText();
-                String email = emailField.getText();
+                String nume = FormValidator.normalizeazaText(numeField.getText());
+                String telefon = FormValidator.normalizeazaTelefon(telefonField.getText());
+                String email = FormValidator.normalizeazaEmail(emailField.getText());
 
                 FormValidator.valideazaClientForm(nume, telefon, email);
 

@@ -10,6 +10,7 @@ import com.bragari.models.Utilizator;
 import com.bragari.services.AuthService;
 import com.bragari.util.BackgroundRunner;
 import com.bragari.util.DialogHelper;
+import com.bragari.util.ViewFactory;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -67,6 +68,7 @@ public class LoginView {
         TextField usernameField = new TextField();
         usernameField.setPromptText("Username");
         usernameField.getStyleClass().add("login-input");
+        ViewFactory.acceptaDoarUsername(usernameField);
 
         PasswordField parolaField = new PasswordField();
         parolaField.setPromptText("Parola");

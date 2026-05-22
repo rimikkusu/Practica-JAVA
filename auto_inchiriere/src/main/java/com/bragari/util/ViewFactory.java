@@ -3,11 +3,15 @@ package com.bragari.util;
 // ViewFactory contine metode pentru construirea componentelor comune din pagini.
 // Este mai usor asa, pentru ca butoanele, cardurile si layout-urile arata la fel.
 
+import java.util.function.UnaryOperator;
+
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -122,5 +126,35 @@ public class ViewFactory {
         Label badge = new Label(text);
         badge.getStyleClass().addAll("badge", styleClass);
         return badge;
+    }
+
+    public static void acceptaDoarNume(TextField field) {
+        seteazaFiltruText(field, "[\\p{L} .'-]{0,80}");
+    }
+
+    public static void acceptaDoarTextAuto(TextField field) {
+        seteazaFiltruText(field, "[\\p{L}0-9 .'-]{0,50}");
+    }
+
+    public static void acceptaDoarTelefon(TextField field) {
+        seteazaFiltruText(field, "\\+?[0-9 -]{0,17}");
+    }
+
+    public static void acceptaDoarNumarDecimal(TextField field) {
+        seteazaFiltruText(field, "\\d{0,8}([.,]\\d{0,2})?");
+    }
+
+    public static void acceptaDoarNumarInmatriculare(TextField field) {
+        seteazaFiltruText(field, "[A-Za-z0-9 -]{0,12}");
+    }
+
+    public static void acceptaDoarUsername(TextField field) {
+        seteazaFiltruText(field, "[A-Za-z0-9._-]{0,30}");
+    }
+
+    private static void seteazaFiltruText(TextField field, String regex) {
+        UnaryOperator<TextFormatter.Change> filtru = change ->
+                change.getControlNewText().matches(regex) ? change : null;
+        field.setTextFormatter(new TextFormatter<>(filtru));
     }
 }
